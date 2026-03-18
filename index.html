@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="af">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -442,7 +442,7 @@ body {
       </div>
       <div>
         <h1 id="headerName">StudyM8</h1>
-        <div class="subtitle" id="headerSubtitle">Graad 12 - 2026</div>
+        <div class="subtitle" id="headerSubtitle">Grade 12 - 2026</div>
       </div>
     </div>
     <div>
@@ -457,9 +457,9 @@ body {
   <div class="xp-bar-wrap" id="xpWidget"></div>
   <div class="countdown-widget" id="countdownWidget"></div>
   <div class="stats-row" id="statsRow"></div>
-  <div class="section-title">Dringend & Besig</div>
+  <div class="section-title">Urgent & In Progress</div>
   <div id="urgentList"></div>
-  <div class="section-title" style="margin-top:16px">Komende (30 dae)</div>
+  <div class="section-title" style="margin-top:16px">Coming Up (30 days)</div>
   <div id="soonList"></div>
 </div>
 
@@ -467,7 +467,7 @@ body {
 <div class="page" id="page-timeline">
   <div style="margin-bottom:8px">
     <select class="subject-dropdown" id="subjDropdown" onchange="setFilter(this.value)">
-      <option value="all">Alle Vakke</option>
+      <option value="all">All Subjects</option>
     </select>
   </div>
   <div class="filter-row" id="filterRow"></div>
@@ -482,25 +482,25 @@ body {
     <button class="cal-nav-btn" onclick="changeMonth(1)">&gt;</button>
   </div>
   <div class="cal-grid" id="calGrid"></div>
-  <div class="section-title" style="margin-top:14px">Hierdie maand</div>
+  <div class="section-title" style="margin-top:14px">This Month</div>
   <div id="calMonthList"></div>
 </div>
 
 <!-- SOCIAL -->
 <div class="page" id="page-social">
   <div class="share-card">
-    <h3>Deel met Vriende</h3>
-    <p>Deel jou vordering, kompeteer, en motiveer mekaar!</p>
+    <h3>Share with Friends</h3>
+    <p>Share your progress, compete, and motivate each other!</p>
     <div class="share-btn-row">
-      <button class="share-btn share-btn-primary" onclick="shareProgress()">Deel Vordering</button>
-      <button class="share-btn share-btn-secondary" onclick="showImportModal()">Laai Vriend</button>
+      <button class="share-btn share-btn-primary" onclick="shareProgress()">Share Progress</button>
+      <button class="share-btn share-btn-secondary" onclick="showImportModal()">Add Friend</button>
     </div>
   </div>
 
   <div class="tab-row">
-    <button class="tab-btn active" onclick="switchSocialTab('leaderboard', this)">Ranglys</button>
-    <button class="tab-btn" onclick="switchSocialTab('friends', this)">Vriende</button>
-    <button class="tab-btn" onclick="switchSocialTab('achievements', this)">Prestasies</button>
+    <button class="tab-btn active" onclick="switchSocialTab('leaderboard', this)">Leaderboard</button>
+    <button class="tab-btn" onclick="switchSocialTab('friends', this)">Friends</button>
+    <button class="tab-btn" onclick="switchSocialTab('achievements', this)">Achievements</button>
   </div>
 
   <div id="socialTab-leaderboard"></div>
@@ -514,70 +514,70 @@ body {
     <div class="profile-avatar-wrap" onclick="document.getElementById('avatarInput').click()">
       <span class="avatar-placeholder" id="profileAvatarPlaceholder">M</span>
       <img id="profileAvatarImg" style="display:none">
-      <div class="avatar-edit-hint">Tik om te verander</div>
+      <div class="avatar-edit-hint">Tap to change</div>
     </div>
     <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
     <div class="profile-name" id="profileDisplayName">Marita Postma</div>
-    <div class="profile-motto" id="profileDisplayMotto">"Werk hard, droom groot"</div>
-    <div class="profile-school" id="profileDisplaySchool">Impaq - Graad 12</div>
+    <div class="profile-motto" id="profileDisplayMotto">"Work hard, dream big"</div>
+    <div class="profile-school" id="profileDisplaySchool">Impaq - Grade 12</div>
   </div>
 
   <div class="card">
-    <div class="section-title" style="margin-top:0">Redigeer Profiel</div>
+    <div class="section-title" style="margin-top:0">Edit Profile</div>
     <div class="profile-form-group">
-      <label>Naam</label>
-      <input id="profName" placeholder="Jou naam" oninput="saveProfile()">
+      <label>Name</label>
+      <input id="profName" placeholder="Your name" oninput="saveProfile()">
     </div>
     <div class="profile-form-group">
-      <label>Van</label>
-      <input id="profSurname" placeholder="Jou van" oninput="saveProfile()">
+      <label>Surname</label>
+      <input id="profSurname" placeholder="Your surname" oninput="saveProfile()">
     </div>
     <div class="profile-form-group">
-      <label>Skool / Instelling</label>
-      <input id="profSchool" placeholder="bv. Impaq" oninput="saveProfile()">
+      <label>School / Institution</label>
+      <input id="profSchool" placeholder="e.g. Impaq" oninput="saveProfile()">
     </div>
     <div class="profile-form-group">
-      <label>Graad</label>
+      <label>Grade</label>
       <select id="profGrade" onchange="saveProfile()">
-        <option value="10">Graad 10</option>
-        <option value="11">Graad 11</option>
-        <option value="12" selected>Graad 12</option>
+        <option value="10">Grade 10</option>
+        <option value="11">Grade 11</option>
+        <option value="12" selected>Grade 12</option>
       </select>
     </div>
     <div class="profile-form-group">
       <label>Motto / Bio</label>
-      <input id="profMotto" placeholder="Jou leuse..." oninput="saveProfile()">
+      <input id="profMotto" placeholder="Your motto..." oninput="saveProfile()">
     </div>
   </div>
 
   <div class="card">
-    <div class="section-title" style="margin-top:0">My Vakke</div>
+    <div class="section-title" style="margin-top:0">My Subjects</div>
     <div class="subject-toggle" id="subjectToggles"></div>
   </div>
 
   <div class="card">
-    <div class="section-title" style="margin-top:0">Vordering Opsomming</div>
+    <div class="section-title" style="margin-top:0">Progress Summary</div>
     <div id="profileProgress"></div>
   </div>
 
   <div class="card" style="text-align:center">
-    <button class="modal-btn" onclick="exportAllData()" style="background:var(--done)">Eksporteer Data</button>
-    <button class="modal-btn modal-btn-outline" onclick="showResetConfirm()" style="margin-top:6px; color:var(--urgent); border-color:var(--urgent)">Herstel Alles</button>
+    <button class="modal-btn" onclick="exportAllData()" style="background:var(--done)">Export Data</button>
+    <button class="modal-btn modal-btn-outline" onclick="showResetConfirm()" style="margin-top:6px; color:var(--urgent); border-color:var(--urgent)">Reset All</button>
   </div>
 </div>
 
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="showPage('home')" data-page="home">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    Tuis
+    Home
   </button>
   <button class="nav-item" onclick="showPage('timeline')" data-page="timeline">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    Tydlyn
+    Timeline
   </button>
   <button class="nav-item" onclick="showPage('calendar')" data-page="calendar">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    Kalender
+    Calendar
   </button>
   <button class="nav-item" onclick="showPage('social')" data-page="social">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -586,16 +586,16 @@ body {
   </button>
   <button class="nav-item" onclick="showPage('profile')" data-page="profile">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    Profiel
+    Profile
   </button>
 </nav>
 
 <script>
 // ===== CONSTANTS =====
 const TODAY = new Date();
-const MONTHS = ['Januarie','Februarie','Maart','April','Mei','Junie','Julie','Augustus','September','Oktober','November','Desember'];
-const MONTHS_SHORT = ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des'];
-const DAYS_SHORT = ['So','Ma','Di','Wo','Do','Vr','Sa'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS_SHORT = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
 const SUBJ_COLORS = {
   afrikaans:'#e91e63', english:'#2196f3', geografie:'#4caf50',
@@ -603,12 +603,12 @@ const SUBJ_COLORS = {
 };
 const SUBJ_NAMES = {
   afrikaans:'Afrikaans', english:'English', geografie:'Geografie',
-  landbou:'Landbou', lo:'LO', lewenswet:'Lewenswet.', wiskundig:'Wisk. Gel.'
+  landbou:'Agric Mgmt', lo:'Life Orient.', lewenswet:'Life Sciences', wiskundig:'Maths Lit.'
 };
 const SUBJ_FULL = {
   afrikaans:'Afrikaans Huistaal', english:'English FAL', geografie:'Geografie',
-  landbou:'Landboubestuurspraktyke', lo:'Lewensorientering',
-  lewenswet:'Lewenswetenskappe', wiskundig:'Wiskundige Geletterdheid'
+  landbou:'Agricultural Management Practices', lo:'Life Orientation',
+  lewenswet:'Life Sciences', wiskundig:'Mathematical Literacy'
 };
 
 // ===== ASSESSMENT DATA =====
@@ -686,18 +686,18 @@ const DATA = [
 
 // ===== ACHIEVEMENTS =====
 const ACHIEVEMENTS = [
-  {id:'first_done', icon:'🎯', name:'Eerste Taak', desc:'Merk jou eerste taak klaar', xp:50, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 1},
-  {id:'five_done', icon:'⭐', name:'Vyf Sterk', desc:'5 take klaar gemerk', xp:100, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 5},
-  {id:'ten_done', icon:'🔥', name:'Op Dreef', desc:'10 take klaar', xp:200, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 10},
-  {id:'twenty_done', icon:'💪', name:'Powerhouse', desc:'20 take klaar', xp:400, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 20},
-  {id:'half_done', icon:'🏆', name:'Halfpad', desc:'Helfte van alle take klaar', xp:500, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= Math.floor(DATA.length/2)},
-  {id:'all_done', icon:'👑', name:'Matriek Boss', desc:'Alle take klaar!', xp:1000, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= DATA.length},
-  {id:'first_exam', icon:'📝', name:'Eksamen Oorlewer', desc:'Eerste eksamen klaar', xp:150, check: s => DATA.some(a => a.type==='Eksamen' && s.done[a.id])},
-  {id:'profile_set', icon:'📸', name:'Selfie', desc:'Profiel foto opgelaai', xp:30, check: s => !!s.profile?.avatar},
-  {id:'note_taker', icon:'📋', name:'Nota Nemer', desc:'Eerste nota bygevoeg', xp:30, check: s => Object.keys(s.notes||{}).some(k => s.notes[k])},
-  {id:'streak_3', icon:'🔥', name:'3 Dae Streak', desc:'3 dae aanmekaar ingecheck', xp:75, check: s => (s.streak||0) >= 3},
-  {id:'streak_7', icon:'💥', name:'Week Warrior', desc:'7 dae streak', xp:200, check: s => (s.streak||0) >= 7},
-  {id:'all_subjects', icon:'🌈', name:'Allrounder', desc:'Ten minste 1 taak per vak klaar', xp:300, check: s => {
+  {id:'first_done', icon:'🎯', name:'First Task', desc:'Complete your first task', xp:50, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 1},
+  {id:'five_done', icon:'⭐', name:'High Five', desc:'5 tasks completed', xp:100, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 5},
+  {id:'ten_done', icon:'🔥', name:'On Fire', desc:'10 tasks completed', xp:200, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 10},
+  {id:'twenty_done', icon:'💪', name:'Powerhouse', desc:'20 tasks completed', xp:400, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 20},
+  {id:'half_done', icon:'🏆', name:'Halfway', desc:'Half of all tasks completed', xp:500, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= Math.floor(DATA.length/2)},
+  {id:'all_done', icon:'👑', name:'Matric Boss', desc:'All tasks completed!', xp:1000, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= DATA.length},
+  {id:'first_exam', icon:'📝', name:'Exam Survivor', desc:'First exam completed', xp:150, check: s => DATA.some(a => a.type==='Eksamen' && s.done[a.id])},
+  {id:'profile_set', icon:'📸', name:'Selfie', desc:'Profile photo uploaded', xp:30, check: s => !!s.profile?.avatar},
+  {id:'note_taker', icon:'📋', name:'Note Taker', desc:'First note added', xp:30, check: s => Object.keys(s.notes||{}).some(k => s.notes[k])},
+  {id:'streak_3', icon:'🔥', name:'3 Day Streak', desc:'3 days in a row', xp:75, check: s => (s.streak||0) >= 3},
+  {id:'streak_7', icon:'💥', name:'Week Warrior', desc:'7 day streak', xp:200, check: s => (s.streak||0) >= 7},
+  {id:'all_subjects', icon:'🌈', name:'Allrounder', desc:'At least 1 task per subject done', xp:300, check: s => {
     const subjs = new Set(DATA.filter(a=>s.done[a.id]).map(a=>a.s));
     return subjs.size >= 7;
   }},
@@ -706,12 +706,12 @@ const ACHIEVEMENTS = [
 const LEVELS = [
   {min:0, title:'Beginner 📚'},
   {min:100, title:'Student 📖'},
-  {min:250, title:'Studeerder 🧠'},
-  {min:500, title:'Slim Kop 🎓'},
-  {min:800, title:'Akademiese Ster ⭐'},
-  {min:1200, title:'Kenner 🔬'},
-  {min:1800, title:'Meester 🏅'},
-  {min:2500, title:'Matriek Legende 👑'},
+  {min:250, title:'Scholar 🧠'},
+  {min:500, title:'Brainiac 🎓'},
+  {min:800, title:'Academic Star ⭐'},
+  {min:1200, title:'Expert 🔬'},
+  {min:1800, title:'Master 🏅'},
+  {min:2500, title:'Matric Legend 👑'},
 ];
 
 // ===== STATE =====
@@ -721,7 +721,7 @@ if (!state.notes) state.notes = {};
 if (!state.marks) state.marks = {};
 if (!state.achievements) state.achievements = {};
 if (!state.friends) state.friends = [];
-if (!state.profile) state.profile = {name:'Marita', surname:'Postma', school:'Impaq', grade:'12', motto:'Werk hard, droom groot', avatar:null};
+if (!state.profile) state.profile = {name:'Marita', surname:'Postma', school:'Impaq', grade:'12', motto:'Work hard, dream big', avatar:null};
 if (!state.xp) state.xp = 0;
 if (!state.streak) state.streak = 0;
 if (!state.lastVisit) state.lastVisit = null;
@@ -783,7 +783,7 @@ function toggleDone(id, ev) {
   }
   saveState();
   renderAll();
-  toast(state.done[id] ? '✓ Klaar gemerk!' : 'Ontmerk');
+  toast(state.done[id] ? '✓ Marked as done!' : 'Unmarked');
 }
 
 function toast(msg) {
@@ -805,16 +805,16 @@ function renderItem(a) {
   const note = state.notes[a.id] || '';
 
   let statusHtml = '';
-  if (isDone) statusHtml = `<span class="status-pill sp-done">Klaar${mark?' '+mark:''}</span>`;
-  else if (status==='process') statusHtml = `<span class="status-pill sp-process">Besig</span>`;
-  else if (status==='urgent'||status==='overdue') statusHtml = `<span class="status-pill sp-urgent">${days<0?'Verlaat!':days+' dae'}</span>`;
-  else if (status==='soon') statusHtml = `<span class="status-pill sp-urgent">${days} dae</span>`;
-  else statusHtml = `<span class="status-pill sp-upcoming">${days} dae</span>`;
+  if (isDone) statusHtml = `<span class="status-pill sp-done">Done${mark?' '+mark:''}</span>`;
+  else if (status==='process') statusHtml = `<span class="status-pill sp-process">In Progress</span>`;
+  else if (status==='urgent'||status==='overdue') statusHtml = `<span class="status-pill sp-urgent">${days<0?'Overdue!':days+' days'}</span>`;
+  else if (status==='soon') statusHtml = `<span class="status-pill sp-urgent">${days} days</span>`;
+  else statusHtml = `<span class="status-pill sp-upcoming">${days} days</span>`;
 
   let prep = '';
   if (!isDone && a.type==='Eksamen') {
-    if (days>14&&days<=42) prep = `<div class="prep-hint">Begin voorberei! Eksamen oor ${days} dae</div>`;
-    else if (days>42) { const ps=new Date(d); ps.setDate(ps.getDate()-28); prep=`<div class="prep-hint">Begin voorberei teen ${ps.getDate()} ${MONTHS_SHORT[ps.getMonth()]}</div>`; }
+    if (days>14&&days<=42) prep = `<div class="prep-hint">Start preparing! Exam in ${days} days</div>`;
+    else if (days>42) { const ps=new Date(d); ps.setDate(ps.getDate()-28); prep=`<div class="prep-hint">Start preparing by ${ps.getDate()} ${MONTHS_SHORT[ps.getMonth()]}</div>`; }
   }
 
   return `<div class="assess-item ${isDone?'is-done':''}" style="border-left-color:${SUBJ_COLORS[a.s]}" onclick="toggleExpand(this)">
@@ -839,9 +839,9 @@ function renderItem(a) {
       ${statusHtml}
     </div>
     <div class="expand-row" onclick="event.stopPropagation()">
-      <div style="margin-bottom:4px"><b>Kwartaal ${a.q}</b> | Gewig: ${a.w}%</div>
-      ${mark?`<div class="mark-display">Punt: ${mark}</div>`:''}
-      <input class="note-input" placeholder="Voeg nota by..." value="${(note||'').replace(/"/g,'&quot;')}" onchange="saveNote('${a.id}',this.value)">
+      <div style="margin-bottom:4px"><b>Quarter ${a.q}</b> | Weight: ${a.w}%</div>
+      ${mark?`<div class="mark-display">Mark: ${mark}</div>`:''}
+      <input class="note-input" placeholder="Add a note..." value="${(note||'').replace(/"/g,'&quot;')}" onchange="saveNote('${a.id}',this.value)">
     </div>
   </div>`;
 }
@@ -863,7 +863,7 @@ function renderHome() {
 
   // Update header with profile
   const p = state.profile;
-  document.getElementById('headerName').textContent = p.name ? `${p.name} se Planner` : 'StudyM8';
+  document.getElementById('headerName').textContent = p.name ? `${p.name}'s Planner` : 'StudyM8';
   if (p.avatar) {
     document.getElementById('headerAvatar').innerHTML = `<img src="${p.avatar}">`;
   } else {
@@ -882,24 +882,24 @@ function renderHome() {
       <span class="xp-points">${state.xp} XP</span>
     </div>
     <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${xpPct}%"></div></div>
-    <div class="level-title">Nog ${nextLevel.min-state.xp} XP tot volgende vlak</div>
+    <div class="level-title">${nextLevel.min-state.xp} XP to next level</div>
   `;
 
   const next = data.find(a => !state.done[a.id] && getDaysUntil(a.date)>=0);
   if (next) {
     const nd=new Date(next.date), days=getDaysUntil(next.date);
     document.getElementById('countdownWidget').innerHTML = `
-      <div class="cw-label">Volgende assessering oor</div>
-      <div class="cw-days">${days} dae</div>
+      <div class="cw-label">Next assessment in</div>
+      <div class="cw-days">${days} days</div>
       <div class="cw-task">${SUBJ_FULL[next.s]}: ${next.task}</div>
       <div class="cw-date">${nd.getDate()} ${MONTHS[nd.getMonth()]} ${nd.getFullYear()}</div>
     `;
   }
 
   document.getElementById('statsRow').innerHTML = `
-    <div class="stat-card"><div class="stat-num" style="color:var(--done)">${done}</div><div class="stat-label">Klaar</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--urgent)">${urgentCount}</div><div class="stat-label">Dringend</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--upcoming)">${total-done}</div><div class="stat-label">Nog oor</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--done)">${done}</div><div class="stat-label">Done</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--urgent)">${urgentCount}</div><div class="stat-label">Urgent</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--upcoming)">${total-done}</div><div class="stat-label">Remaining</div></div>
   `;
 
   // Update nav badge
@@ -916,12 +916,12 @@ function renderHome() {
   const urgentItems = data.filter(a=>{const s=getStatus(a); return s==='urgent'||s==='overdue'||s==='process'||s==='soon';});
   document.getElementById('urgentList').innerHTML = urgentItems.length
     ? urgentItems.map(a=>renderItem(a)).join('')
-    : '<div class="card" style="text-align:center;color:var(--text-light)">Geen dringende take!</div>';
+    : '<div class="card" style="text-align:center;color:var(--text-light)">No urgent tasks!</div>';
 
   const soonItems = data.filter(a=>{if(state.done[a.id])return false; const d=getDaysUntil(a.date),s=getStatus(a); return d>0&&d<=30&&s==='upcoming';});
   document.getElementById('soonList').innerHTML = soonItems.length
     ? soonItems.map(a=>renderItem(a)).join('')
-    : '<div class="card" style="text-align:center;color:var(--text-light)">Niks in volgende 30 dae nie</div>';
+    : '<div class="card" style="text-align:center;color:var(--text-light)">Nothing in the next 30 days</div>';
 }
 
 // ===== TIMELINE =====
@@ -938,7 +938,7 @@ function setFilter(subj) {
 
 function renderFilters() {
   // Dropdown
-  let ddHtml = '<option value="all">Alle Vakke</option>';
+  let ddHtml = '<option value="all">All Subjects</option>';
   Object.keys(SUBJ_FULL).forEach(k => {
     if (state.subjects.includes(k))
       ddHtml += `<option value="${k}">${SUBJ_FULL[k]}</option>`;
@@ -947,7 +947,7 @@ function renderFilters() {
 
   // Chips for status
   document.getElementById('filterRow').innerHTML = `
-    <span class="chip active" data-subj="all" onclick="setFilter('all')">Alles</span>
+    <span class="chip active" data-subj="all" onclick="setFilter('all')">All</span>
     ${state.subjects.map(k=>`<span class="chip" data-subj="${k}" onclick="setFilter('${k}')" style="border-color:${SUBJ_COLORS[k]}">${SUBJ_NAMES[k]}</span>`).join('')}
   `;
 }
@@ -965,7 +965,7 @@ function renderTimeline() {
     }
     html+=renderItem(a);
   });
-  document.getElementById('timelineList').innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--text-light)">Geen assesserings gevind nie</div>';
+  document.getElementById('timelineList').innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--text-light)">No assessments found</div>';
 }
 
 // ===== CALENDAR =====
@@ -990,7 +990,7 @@ function renderCalendar() {
   document.getElementById('calGrid').innerHTML = html;
 
   const monthA = data.filter(a=>{const d=new Date(a.date); return d.getMonth()===calMonth&&d.getFullYear()===calYear;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
-  document.getElementById('calMonthList').innerHTML = monthA.length ? monthA.map(a=>renderItem(a)).join('') : '<div class="card" style="text-align:center;color:var(--text-light)">Geen assesserings hierdie maand nie</div>';
+  document.getElementById('calMonthList').innerHTML = monthA.length ? monthA.map(a=>renderItem(a)).join('') : '<div class="card" style="text-align:center;color:var(--text-light)">No assessments this month</div>';
 }
 
 function showDayPopup(ds) {
@@ -999,7 +999,7 @@ function showDayPopup(ds) {
   const d=new Date(ds);
   let html=`<button class="modal-close" onclick="closeModal()">&times;</button>
     <h3>${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}</h3>
-    <div style="font-size:0.82em;color:var(--text-light);margin-bottom:12px">${da.length} assessering(s)</div>`;
+    <div style="font-size:0.82em;color:var(--text-light);margin-bottom:12px">${da.length} assessment(s)</div>`;
   da.forEach(a=>html+=renderItem(a));
   document.getElementById('modalContent').innerHTML = html;
   document.getElementById('modalOverlay').classList.add('show');
@@ -1045,15 +1045,15 @@ function renderLeaderboard() {
       <div class="lb-rank ${rankClass}">${i+1}</div>
       <div class="friend-avatar">${avatarHtml}</div>
       <div class="lb-info">
-        <div class="lb-name">${e.name} ${e.me?'(Jy)':''}</div>
-        <div class="lb-detail">${e.pct}% klaar | ${e.xp} XP</div>
+        <div class="lb-name">${e.name} ${e.me?'(You)':''}</div>
+        <div class="lb-detail">${e.pct}% done | ${e.xp} XP</div>
       </div>
       <div class="lb-score">${e.xp}</div>
     </div>`;
   });
 
   if (entries.length <= 1) {
-    html += '<div class="card" style="text-align:center;color:var(--text-light);margin-top:12px">Deel jou kode met vriende om die ranglys te vul!</div>';
+    html += '<div class="card" style="text-align:center;color:var(--text-light);margin-top:12px">Share your code with friends to fill the leaderboard!</div>';
   }
 
   document.getElementById('socialTab-leaderboard').innerHTML = html;
@@ -1064,8 +1064,8 @@ function renderFriends() {
   if (state.friends.length === 0) {
     html = `<div class="card" style="text-align:center;padding:30px">
       <div style="font-size:2.5em;margin-bottom:8px">👥</div>
-      <div style="font-weight:700;margin-bottom:6px">Nog geen vriende nie</div>
-      <div style="font-size:0.82em;color:var(--text-light)">Deel jou vordering en laai vriende se data in!</div>
+      <div style="font-weight:700;margin-bottom:6px">No friends yet</div>
+      <div style="font-size:0.82em;color:var(--text-light)">Share your progress and add friends' data!</div>
     </div>`;
   } else {
     state.friends.forEach((f,i) => {
@@ -1077,7 +1077,7 @@ function renderFriends() {
         </div>
         <div class="friend-progress">
           <div class="friend-pct">${f.progress||0}%</div>
-          <div class="friend-pct-label">klaar</div>
+          <div class="friend-pct-label">done</div>
         </div>
       </div>`;
     });
@@ -1115,22 +1115,22 @@ function shareProgress() {
     date: TODAY.toISOString().split('T')[0]
   };
 
-  const shareText = `📚 ${p.name} se StudyM8 vordering:\n✅ ${pct}% klaar (${done}/${data.length} take)\n⭐ ${state.xp} XP | 🏆 ${shareData.achievements} prestasies\n🔥 ${state.streak} dae streak\n\nData kode: ${btoa(JSON.stringify(shareData))}`;
+  const shareText = `📚 ${p.name}'s StudyM8 progress:\n✅ ${pct}% done (${done}/${data.length} tasks)\n⭐ ${state.xp} XP | 🏆 ${shareData.achievements} achievements\n🔥 ${state.streak} day streak\n\nData code: ${btoa(JSON.stringify(shareData))}`;
 
   if (navigator.share) {
-    navigator.share({title:'StudyM8 Vordering', text:shareText}).catch(()=>{});
+    navigator.share({title:'StudyM8 Progress', text:shareText}).catch(()=>{});
   } else {
-    navigator.clipboard.writeText(shareText).then(() => toast('Gekopieer na clipboard!')).catch(()=>{
-      showModal('Deel Vordering', `<textarea style="width:100%;height:120px;font-size:0.82em;border:1px solid #ddd;border-radius:8px;padding:8px" readonly>${shareText}</textarea><p style="font-size:0.78em;color:var(--text-light);margin-top:8px">Kopieer en stuur via WhatsApp!</p>`);
+    navigator.clipboard.writeText(shareText).then(() => toast('Copied to clipboard!')).catch(()=>{
+      showModal('Share Progress', `<textarea style="width:100%;height:120px;font-size:0.82em;border:1px solid #ddd;border-radius:8px;padding:8px" readonly>${shareText}</textarea><p style="font-size:0.78em;color:var(--text-light);margin-top:8px">Copy and send via WhatsApp!</p>`);
     });
   }
 }
 
 function showImportModal() {
-  showModal('Laai Vriend se Data', `
-    <p style="font-size:0.82em;color:var(--text-light);margin-bottom:12px">Plak jou vriend se data kode hieronder:</p>
-    <textarea id="importCode" style="width:100%;height:80px;border:1px solid #ddd;border-radius:8px;padding:8px;font-size:0.82em" placeholder="Plak kode hier..."></textarea>
-    <button class="modal-btn" onclick="importFriend()">Voeg By</button>
+  showModal('Add Friend Data', `
+    <p style="font-size:0.82em;color:var(--text-light);margin-bottom:12px">Paste your friend's data code below:</p>
+    <textarea id="importCode" style="width:100%;height:80px;border:1px solid #ddd;border-radius:8px;padding:8px;font-size:0.82em" placeholder="Paste code here..."></textarea>
+    <button class="modal-btn" onclick="importFriend()">Add</button>
   `);
 }
 
@@ -1138,7 +1138,7 @@ function importFriend() {
   const code = document.getElementById('importCode').value.trim();
   try {
     // Try to find base64 data code in text
-    const match = code.match(/Data kode: (.+)/);
+    const match = code.match(/Data code: (.+)/);
     const raw = match ? match[1] : code;
     const data = JSON.parse(atob(raw));
     if (data.name) {
@@ -1148,7 +1148,7 @@ function importFriend() {
         saveState();
         renderSocial();
         closeModal();
-        toast(`${data.name} bygevoeg!`);
+        toast(`${data.name} added!`);
       } else {
         // Update existing
         const idx = state.friends.findIndex(f=>f.name===data.name);
@@ -1156,11 +1156,11 @@ function importFriend() {
         saveState();
         renderSocial();
         closeModal();
-        toast(`${data.name} opgedateer!`);
+        toast(`${data.name} updated!`);
       }
     }
   } catch(e) {
-    toast('Ongeldige kode, probeer weer');
+    toast('Invalid code, try again');
   }
 }
 
@@ -1184,7 +1184,7 @@ function renderProfile() {
 
   document.getElementById('profileDisplayName').textContent = `${p.name||''} ${p.surname||''}`;
   document.getElementById('profileDisplayMotto').textContent = p.motto ? `"${p.motto}"` : '';
-  document.getElementById('profileDisplaySchool').textContent = `${p.school||''} - Graad ${p.grade||'12'}`;
+  document.getElementById('profileDisplaySchool').textContent = `${p.school||''} - Grade ${p.grade||'12'}`;
 
   if (p.avatar) {
     document.getElementById('profileAvatarImg').src = p.avatar;
@@ -1253,7 +1253,7 @@ function handleAvatarUpload(e) {
       renderProfile();
       renderHome();
       checkAchievements();
-      toast('Profiel foto opgedateer!');
+      toast('Profile photo updated!');
     };
     img.src = ev.target.result;
   };
@@ -1274,14 +1274,14 @@ function exportAllData() {
   const a = document.createElement('a');
   a.href = url; a.download = 'studym8_backup.json'; a.click();
   URL.revokeObjectURL(url);
-  toast('Data geeksporteer!');
+  toast('Data exported!');
 }
 
 function showResetConfirm() {
-  showModal('Herstel Alles', `
-    <p style="font-size:0.85em;margin-bottom:14px">Is jy seker? Dit sal al jou vordering, notas, en profiel uitvee.</p>
-    <button class="modal-btn" style="background:var(--urgent)" onclick="resetAll()">Ja, Herstel</button>
-    <button class="modal-btn modal-btn-outline" style="margin-top:6px" onclick="closeModal()">Kanselleer</button>
+  showModal('Reset All', `
+    <p style="font-size:0.85em;margin-bottom:14px">Are you sure? This will delete all your progress, notes, and profile.</p>
+    <button class="modal-btn" style="background:var(--urgent)" onclick="resetAll()">Yes, Reset</button>
+    <button class="modal-btn modal-btn-outline" style="margin-top:6px" onclick="closeModal()">Cancel</button>
   `);
 }
 
@@ -1294,8 +1294,8 @@ function showStreakInfo() {
   showModal('🔥 Streak', `
     <div style="text-align:center">
       <div style="font-size:3em">🔥</div>
-      <div style="font-size:1.5em;font-weight:800;margin:8px 0">${state.streak} Dae</div>
-      <p style="font-size:0.85em;color:var(--text-light)">Jy het ${state.streak} dae aanmekaar die app oopgemaak. Hou so aan!</p>
+      <div style="font-size:1.5em;font-weight:800;margin:8px 0">${state.streak} Days</div>
+      <p style="font-size:0.85em;color:var(--text-light)">You've opened the app ${state.streak} days in a row. Keep it up!</p>
     </div>
   `);
 }
