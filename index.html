@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StudyM8">
+<meta name="theme-color" content="#1a237e">
+<link rel="manifest" href="manifest.json">
+<title>StudyM8 - Gr12 Planner</title>
+<style>
+:root {
+  --primary: #1a237e;
+  --primary-light: #3949ab;
+  --bg: #f0f2f5;
+  --card: #fff;
+  --text: #333;
+  --text-light: #777;
+  --done: #2e7d32;
+  --urgent: #c62828;
+  --process: #e65100;
+  --upcoming: #1565c0;
+  --gold: #ffc107;
+  --afrikaans: #e91e63;
+  --english: #2196f3;
+  --geografie: #4caf50;
+  --landbou: #ff9800;
+  --lo: #9c27b0;
+  --lewenswet: #00bcd4;
+  --wiskundig: #795548;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height:1.45;
+  padding-bottom: calc(75px + var(--safe-bottom));
+  overflow-x: hidden;
+}
+
+/* Header */
+.app-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: calc(12px + var(--safe-top)) 16px 12px;
+  position: sticky; top:0; z-index:50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.header-row { display:flex; justify-content:space-between; align-items:center; }
+.header-left { display:flex; align-items:center; gap:10px; }
+.header-avatar {
+  width:36px; height:36px; border-radius:50%;
+  border:2px solid rgba(255,255,255,0.5);
+  object-fit:cover; cursor:pointer;
+  background: rgba(255,255,255,0.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1em; overflow:hidden;
+}
+.header-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.app-header h1 { font-size:1.1em; }
+.app-header .subtitle { font-size:0.72em; opacity:0.8; }
+.today-badge {
+  background: rgba(255,255,255,0.2);
+  padding:3px 10px; border-radius:14px; font-size:0.7em;
+}
+.streak-badge {
+  background: linear-gradient(135deg, #ff6f00, #ffc107);
+  padding:3px 10px; border-radius:14px; font-size:0.7em;
+  font-weight:700; margin-left:6px; cursor:pointer;
+}
+
+/* Bottom Nav - 5 tabs */
+.bottom-nav {
+  position:fixed; bottom:0; left:0; right:0;
+  background:white; display:flex; justify-content:space-around;
+  padding:6px 0 calc(6px + var(--safe-bottom));
+  border-top:1px solid #e0e0e0; z-index:100;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+}
+.nav-item {
+  display:flex; flex-direction:column; align-items:center;
+  font-size:0.6em; color:var(--text-light); cursor:pointer;
+  padding:3px 8px; border:none; background:none; transition:color 0.2s;
+  position:relative;
+}
+.nav-item.active { color:var(--primary); font-weight:700; }
+.nav-item svg { width:20px; height:20px; margin-bottom:1px; }
+.nav-badge {
+  position:absolute; top:-2px; right:2px;
+  background:var(--urgent); color:white;
+  font-size:0.85em; font-weight:700;
+  min-width:16px; height:16px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  padding:0 4px;
+}
+
+/* Pages */
+.page { display:none; padding:12px; }
+.page.active { display:block; }
+
+/* Cards */
+.card {
+  background:var(--card); border-radius:12px;
+  padding:14px; margin-bottom:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* Stats */
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+.stat-card { background:white; border-radius:12px; padding:12px 8px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+.stat-num { font-size:1.6em; font-weight:800; }
+.stat-label { font-size:0.7em; color:var(--text-light); }
+
+/* Filter chips */
+.filter-row {
+  display:flex; gap:6px; overflow-x:auto; padding:8px 0;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.filter-row::-webkit-scrollbar { display:none; }
+.chip {
+  flex-shrink:0; padding:6px 14px; border-radius:20px;
+  border:2px solid #ddd; background:white;
+  font-size:0.78em; font-weight:600; cursor:pointer;
+  transition:all 0.2s; white-space:nowrap;
+}
+.chip.active { background:var(--primary); color:white; border-color:var(--primary); }
+
+/* Assessment items */
+.assess-item {
+  background:white; border-radius:12px; padding:12px 14px;
+  margin-bottom:8px; display:flex; gap:10px; align-items:center;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+  border-left:4px solid #ccc; transition:all 0.3s; position:relative;
+}
+.assess-item.is-done { opacity:0.55; }
+.assess-item .date-col { text-align:center; min-width:40px; }
+.assess-item .date-col .day { font-size:1.3em; font-weight:800; line-height:1; }
+.assess-item .date-col .mon { font-size:0.62em; text-transform:uppercase; color:var(--text-light); }
+.assess-item .info-col { flex:1; min-width:0; }
+.assess-item .info-col .subj-line { display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-bottom:2px; }
+.subj-pill { display:inline-block; padding:1px 7px; border-radius:10px; font-size:0.62em; font-weight:700; color:white; }
+.type-pill { display:inline-block; padding:1px 5px; border-radius:4px; font-size:0.6em; font-weight:700; }
+.tp-eksamen { background:#ffcdd2; color:#b71c1c; }
+.tp-toets { background:#fff9c4; color:#f57f17; }
+.tp-taak { background:#c8e6c9; color:#1b5e20; }
+.tp-mondeling { background:#e1bee7; color:#6a1b9a; }
+.tp-pat { background:#b3e5fc; color:#01579b; }
+.assess-item .task-name { font-size:0.82em; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.assess-item .task-desc { font-size:0.7em; color:var(--text-light); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.assess-item .meta-col { text-align:right; min-width:50px; flex-shrink:0; }
+.meta-col .total-mark { font-weight:800; font-size:0.85em; }
+.meta-col .weight-txt { font-size:0.62em; color:var(--text-light); }
+.status-pill { display:inline-block; padding:2px 7px; border-radius:10px; font-size:0.6em; font-weight:700; margin-top:2px; }
+.sp-done { background:#e8f5e9; color:var(--done); }
+.sp-process { background:#fff3e0; color:var(--process); }
+.sp-urgent { background:#ffebee; color:var(--urgent); }
+.sp-upcoming { background:#e3f2fd; color:var(--upcoming); }
+
+.check-btn {
+  width:26px; height:26px; border-radius:50%;
+  border:2px solid #ccc; background:none; cursor:pointer;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:13px; transition:all 0.2s;
+}
+.check-btn.checked { background:var(--done); border-color:var(--done); color:white; }
+
+/* Month divider */
+.month-divider {
+  font-size:0.95em; font-weight:800; color:var(--primary);
+  padding:12px 0 6px; border-bottom:2px solid var(--primary);
+  margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;
+}
+.month-count-badge { font-size:0.6em; font-weight:600; background:#e8eaf6; color:var(--primary); padding:3px 10px; border-radius:10px; }
+
+/* Progress */
+.progress-card { background:white; border-radius:12px; padding:14px; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+.progress-card h3 { font-size:0.88em; display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.prog-bar-bg { background:#e0e0e0; border-radius:8px; height:10px; overflow:hidden; }
+.prog-bar-fill { height:100%; border-radius:8px; transition:width 0.5s; }
+.prog-detail { display:flex; justify-content:space-between; font-size:0.72em; color:var(--text-light); margin-top:4px; }
+
+/* Calendar */
+.cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.cal-header h3 { font-size:1em; }
+.cal-nav-btn { width:32px; height:32px; border-radius:50%; border:1px solid #ccc; background:white; font-size:1em; cursor:pointer; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.cal-day-header { text-align:center; font-size:0.68em; font-weight:700; color:var(--text-light); padding:4px; }
+.cal-day { min-height:48px; background:white; border-radius:6px; padding:3px; font-size:0.68em; cursor:pointer; }
+.cal-day.today { border:2px solid var(--primary); }
+.cal-day.empty { background:transparent; }
+.cal-day .day-num { font-weight:700; font-size:0.85em; }
+.cal-dot { width:5px; height:5px; border-radius:50%; display:inline-block; margin:0 1px; }
+
+/* Countdown */
+.countdown-widget {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color:white; border-radius:14px; padding:16px; margin-bottom:12px; text-align:center;
+}
+.countdown-widget .cw-label { font-size:0.78em; opacity:0.85; }
+.countdown-widget .cw-days { font-size:2.4em; font-weight:900; line-height:1.1; }
+.countdown-widget .cw-task { font-size:0.82em; font-weight:600; margin-top:4px; }
+.countdown-widget .cw-date { font-size:0.72em; opacity:0.7; }
+
+.prep-hint { font-size:0.66em; color:var(--process); font-style:italic; margin-top:2px; }
+.section-title { font-size:0.88em; font-weight:700; color:var(--primary); margin:14px 0 8px; }
+.mark-display { font-size:0.72em; font-weight:700; color:var(--done); }
+
+/* Expand row */
+.expand-row { display:none; padding-top:8px; border-top:1px solid #eee; margin-top:8px; font-size:0.78em; }
+.assess-item.expanded .expand-row { display:block; }
+.note-input { width:100%; padding:6px 10px; border:1px solid #ddd; border-radius:8px; font-size:0.9em; margin-top:6px; }
+
+/* Profile page */
+.profile-header {
+  text-align:center; padding:20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius:16px; color:white; margin-bottom:16px;
+  position:relative;
+}
+.profile-avatar-wrap {
+  width:90px; height:90px; border-radius:50%;
+  border:3px solid rgba(255,255,255,0.5);
+  margin:0 auto 10px; overflow:hidden;
+  cursor:pointer; position:relative;
+  background:rgba(255,255,255,0.15);
+}
+.profile-avatar-wrap img { width:100%; height:100%; object-fit:cover; }
+.profile-avatar-wrap .avatar-placeholder { font-size:2.5em; line-height:90px; }
+.avatar-edit-hint {
+  position:absolute; bottom:0; left:0; right:0;
+  background:rgba(0,0,0,0.5); font-size:0.65em;
+  padding:3px 0; text-align:center;
+}
+.profile-name { font-size:1.3em; font-weight:800; }
+.profile-motto { font-size:0.8em; opacity:0.8; font-style:italic; }
+.profile-school { font-size:0.72em; opacity:0.6; margin-top:4px; }
+
+.profile-form-group { margin-bottom:12px; }
+.profile-form-group label { font-size:0.8em; font-weight:600; display:block; margin-bottom:4px; color:var(--text-light); }
+.profile-form-group input, .profile-form-group select, .profile-form-group textarea {
+  width:100%; padding:10px 12px; border:1px solid #ddd;
+  border-radius:10px; font-size:0.9em; background:white;
+  font-family:inherit;
+}
+.profile-form-group textarea { resize:vertical; min-height:60px; }
+
+.subject-toggle {
+  display:flex; flex-wrap:wrap; gap:6px;
+}
+.subj-toggle-chip {
+  padding:6px 12px; border-radius:16px;
+  border:2px solid #ddd; font-size:0.78em;
+  font-weight:600; cursor:pointer; transition:all 0.2s;
+}
+.subj-toggle-chip.active { color:white; border-color:transparent; }
+
+/* Achievements */
+.achievement-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.achievement {
+  background:white; border-radius:12px; padding:12px 8px;
+  text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);
+  transition:transform 0.2s;
+}
+.achievement.locked { opacity:0.4; filter:grayscale(1); }
+.achievement.unlocked { animation:achievePop 0.5s ease; }
+@keyframes achievePop { 0%{transform:scale(1)} 50%{transform:scale(1.15)} 100%{transform:scale(1)} }
+.achievement .ach-icon { font-size:2em; }
+.achievement .ach-name { font-size:0.68em; font-weight:700; margin-top:4px; }
+.achievement .ach-desc { font-size:0.58em; color:var(--text-light); }
+
+/* XP Bar */
+.xp-bar-wrap {
+  background:white; border-radius:12px; padding:14px;
+  margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+.xp-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.xp-level { font-size:0.9em; font-weight:800; color:var(--primary); }
+.xp-points { font-size:0.75em; color:var(--text-light); }
+.xp-bar-bg { background:#e0e0e0; border-radius:8px; height:12px; overflow:hidden; }
+.xp-bar-fill { height:100%; border-radius:8px; background:linear-gradient(90deg, #ffc107, #ff9800); transition:width 0.5s; }
+.level-title { font-size:0.72em; color:var(--gold); font-weight:600; margin-top:4px; text-align:center; }
+
+/* Social / Share */
+.share-card {
+  background:linear-gradient(135deg, #667eea, #764ba2);
+  border-radius:14px; padding:16px; color:white;
+  margin-bottom:12px; text-align:center;
+}
+.share-card h3 { font-size:1em; margin-bottom:8px; }
+.share-card p { font-size:0.78em; opacity:0.85; margin-bottom:12px; }
+.share-btn-row { display:flex; gap:8px; justify-content:center; }
+.share-btn {
+  padding:8px 16px; border-radius:20px; border:none;
+  font-size:0.8em; font-weight:700; cursor:pointer;
+  transition:transform 0.2s;
+}
+.share-btn:active { transform:scale(0.95); }
+.share-btn-primary { background:white; color:#667eea; }
+.share-btn-secondary { background:rgba(255,255,255,0.2); color:white; }
+
+/* Friend cards */
+.friend-card {
+  background:white; border-radius:12px; padding:12px 14px;
+  margin-bottom:8px; display:flex; align-items:center; gap:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.friend-avatar {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--primary-light); display:flex;
+  align-items:center; justify-content:center;
+  font-size:1.1em; color:white; flex-shrink:0;
+  overflow:hidden;
+}
+.friend-avatar img { width:100%; height:100%; object-fit:cover; }
+.friend-info { flex:1; }
+.friend-name { font-size:0.85em; font-weight:700; }
+.friend-status { font-size:0.7em; color:var(--text-light); }
+.friend-progress { text-align:right; }
+.friend-pct { font-size:1.1em; font-weight:800; color:var(--primary); }
+.friend-pct-label { font-size:0.6em; color:var(--text-light); }
+
+/* Leaderboard */
+.lb-item {
+  background:white; border-radius:12px; padding:12px 14px;
+  margin-bottom:6px; display:flex; align-items:center; gap:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.lb-item.me { background:#e8eaf6; border:2px solid var(--primary); }
+.lb-rank {
+  width:28px; height:28px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:0.85em; flex-shrink:0;
+}
+.lb-rank-1 { background:linear-gradient(135deg,#ffd700,#ffb300); color:white; }
+.lb-rank-2 { background:linear-gradient(135deg,#b0bec5,#90a4ae); color:white; }
+.lb-rank-3 { background:linear-gradient(135deg,#a1887f,#8d6e63); color:white; }
+.lb-rank-other { background:#e0e0e0; color:#666; }
+.lb-info { flex:1; }
+.lb-name { font-size:0.82em; font-weight:700; }
+.lb-detail { font-size:0.68em; color:var(--text-light); }
+.lb-score { text-align:right; font-size:1em; font-weight:800; color:var(--primary); }
+
+/* Popup / Modal */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.5); z-index:200;
+  justify-content:center; align-items:center;
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background:white; border-radius:16px; padding:20px;
+  width:90%; max-width:380px; max-height:85vh;
+  overflow-y:auto; position:relative;
+}
+.modal h3 { margin-bottom:12px; font-size:1.05em; }
+.modal-close {
+  position:absolute; top:12px; right:14px;
+  background:none; border:none; font-size:1.4em;
+  cursor:pointer; color:var(--text-light);
+}
+.modal-btn {
+  width:100%; padding:12px; border:none; border-radius:12px;
+  background:var(--primary); color:white; font-size:0.9em;
+  font-weight:700; cursor:pointer; margin-top:8px;
+}
+.modal-btn:active { opacity:0.85; }
+.modal-btn-outline {
+  background:white; color:var(--primary);
+  border:2px solid var(--primary);
+}
+
+/* Toast */
+.toast {
+  position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-100px);
+  background:var(--primary); color:white; padding:10px 20px;
+  border-radius:12px; z-index:300; font-size:0.82em;
+  transition:transform 0.3s; box-shadow:0 4px 15px rgba(0,0,0,0.3);
+  max-width:90%; text-align:center;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* Achievement unlock popup */
+.ach-popup {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  background:white; border-radius:20px; padding:30px;
+  text-align:center; z-index:400;
+  box-shadow:0 8px 40px rgba(0,0,0,0.3);
+  transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+.ach-popup.show { transform:translate(-50%,-50%) scale(1); }
+.ach-popup .ach-popup-icon { font-size:3.5em; }
+.ach-popup .ach-popup-title { font-size:1.2em; font-weight:800; margin:8px 0 4px; color:var(--primary); }
+.ach-popup .ach-popup-desc { font-size:0.85em; color:var(--text-light); }
+.ach-popup .ach-popup-xp { font-size:0.9em; font-weight:700; color:var(--gold); margin-top:8px; }
+
+/* Confetti canvas */
+#confetti { position:fixed; inset:0; z-index:350; pointer-events:none; }
+
+/* Subject dropdown in filter */
+.subject-dropdown {
+  width:100%; padding:10px 12px; border:1px solid #ddd;
+  border-radius:10px; font-size:0.9em; background:white;
+  font-family:inherit; appearance:auto;
+}
+
+/* Tabs within page */
+.tab-row { display:flex; gap:4px; margin-bottom:12px; background:#e8eaf6; border-radius:12px; padding:3px; }
+.tab-btn {
+  flex:1; padding:8px; border:none; border-radius:10px;
+  background:transparent; font-size:0.78em; font-weight:600;
+  cursor:pointer; transition:all 0.2s; color:var(--text-light);
+}
+.tab-btn.active { background:white; color:var(--primary); box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+
+@media (min-width:600px) { .page { max-width:600px; margin:0 auto; } }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+<canvas id="confetti"></canvas>
+<div class="ach-popup" id="achPopup">
+  <div class="ach-popup-icon" id="achPopupIcon"></div>
+  <div class="ach-popup-title" id="achPopupTitle"></div>
+  <div class="ach-popup-desc" id="achPopupDesc"></div>
+  <div class="ach-popup-xp" id="achPopupXP"></div>
+  <button class="modal-btn" style="margin-top:14px" onclick="closeAchPopup()">Nice!</button>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="app-header" id="appHeader">
+  <div class="header-row">
+    <div class="header-left">
+      <div class="header-avatar" onclick="showPage('profile')" id="headerAvatar">
+        <span class="avatar-placeholder">M</span>
+      </div>
+      <div>
+        <h1 id="headerName">StudyM8</h1>
+        <div class="subtitle" id="headerSubtitle">Graad 12 - 2026</div>
+      </div>
+    </div>
+    <div>
+      <span class="today-badge" id="todayBadge"></span>
+      <span class="streak-badge" id="streakBadge" onclick="showStreakInfo()"></span>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="xp-bar-wrap" id="xpWidget"></div>
+  <div class="countdown-widget" id="countdownWidget"></div>
+  <div class="stats-row" id="statsRow"></div>
+  <div class="section-title">Dringend & Besig</div>
+  <div id="urgentList"></div>
+  <div class="section-title" style="margin-top:16px">Komende (30 dae)</div>
+  <div id="soonList"></div>
+</div>
+
+<!-- TIMELINE -->
+<div class="page" id="page-timeline">
+  <div style="margin-bottom:8px">
+    <select class="subject-dropdown" id="subjDropdown" onchange="setFilter(this.value)">
+      <option value="all">Alle Vakke</option>
+    </select>
+  </div>
+  <div class="filter-row" id="filterRow"></div>
+  <div id="timelineList"></div>
+</div>
+
+<!-- CALENDAR -->
+<div class="page" id="page-calendar">
+  <div class="cal-header">
+    <button class="cal-nav-btn" onclick="changeMonth(-1)">&lt;</button>
+    <h3 id="calTitle"></h3>
+    <button class="cal-nav-btn" onclick="changeMonth(1)">&gt;</button>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div class="section-title" style="margin-top:14px">Hierdie maand</div>
+  <div id="calMonthList"></div>
+</div>
+
+<!-- SOCIAL -->
+<div class="page" id="page-social">
+  <div class="share-card">
+    <h3>Deel met Vriende</h3>
+    <p>Deel jou vordering, kompeteer, en motiveer mekaar!</p>
+    <div class="share-btn-row">
+      <button class="share-btn share-btn-primary" onclick="shareProgress()">Deel Vordering</button>
+      <button class="share-btn share-btn-secondary" onclick="showImportModal()">Laai Vriend</button>
+    </div>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchSocialTab('leaderboard', this)">Ranglys</button>
+    <button class="tab-btn" onclick="switchSocialTab('friends', this)">Vriende</button>
+    <button class="tab-btn" onclick="switchSocialTab('achievements', this)">Prestasies</button>
+  </div>
+
+  <div id="socialTab-leaderboard"></div>
+  <div id="socialTab-friends" style="display:none"></div>
+  <div id="socialTab-achievements" style="display:none"></div>
+</div>
+
+<!-- PROFILE -->
+<div class="page" id="page-profile">
+  <div class="profile-header" id="profileHeader">
+    <div class="profile-avatar-wrap" onclick="document.getElementById('avatarInput').click()">
+      <span class="avatar-placeholder" id="profileAvatarPlaceholder">M</span>
+      <img id="profileAvatarImg" style="display:none">
+      <div class="avatar-edit-hint">Tik om te verander</div>
+    </div>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
+    <div class="profile-name" id="profileDisplayName">Marita Postma</div>
+    <div class="profile-motto" id="profileDisplayMotto">"Werk hard, droom groot"</div>
+    <div class="profile-school" id="profileDisplaySchool">Impaq - Graad 12</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title" style="margin-top:0">Redigeer Profiel</div>
+    <div class="profile-form-group">
+      <label>Naam</label>
+      <input id="profName" placeholder="Jou naam" oninput="saveProfile()">
+    </div>
+    <div class="profile-form-group">
+      <label>Van</label>
+      <input id="profSurname" placeholder="Jou van" oninput="saveProfile()">
+    </div>
+    <div class="profile-form-group">
+      <label>Skool / Instelling</label>
+      <input id="profSchool" placeholder="bv. Impaq" oninput="saveProfile()">
+    </div>
+    <div class="profile-form-group">
+      <label>Graad</label>
+      <select id="profGrade" onchange="saveProfile()">
+        <option value="10">Graad 10</option>
+        <option value="11">Graad 11</option>
+        <option value="12" selected>Graad 12</option>
+      </select>
+    </div>
+    <div class="profile-form-group">
+      <label>Motto / Bio</label>
+      <input id="profMotto" placeholder="Jou leuse..." oninput="saveProfile()">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title" style="margin-top:0">My Vakke</div>
+    <div class="subject-toggle" id="subjectToggles"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title" style="margin-top:0">Vordering Opsomming</div>
+    <div id="profileProgress"></div>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <button class="modal-btn" onclick="exportAllData()" style="background:var(--done)">Eksporteer Data</button>
+    <button class="modal-btn modal-btn-outline" onclick="showResetConfirm()" style="margin-top:6px; color:var(--urgent); border-color:var(--urgent)">Herstel Alles</button>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="showPage('home')" data-page="home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Tuis
+  </button>
+  <button class="nav-item" onclick="showPage('timeline')" data-page="timeline">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Tydlyn
+  </button>
+  <button class="nav-item" onclick="showPage('calendar')" data-page="calendar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Kalender
+  </button>
+  <button class="nav-item" onclick="showPage('social')" data-page="social">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span id="socialBadge"></span>
+    Squad
+  </button>
+  <button class="nav-item" onclick="showPage('profile')" data-page="profile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profiel
+  </button>
+</nav>
+
+<script>
+// ===== CONSTANTS =====
+const TODAY = new Date();
+const MONTHS = ['Januarie','Februarie','Maart','April','Mei','Junie','Julie','Augustus','September','Oktober','November','Desember'];
+const MONTHS_SHORT = ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des'];
+const DAYS_SHORT = ['So','Ma','Di','Wo','Do','Vr','Sa'];
+
+const SUBJ_COLORS = {
+  afrikaans:'#e91e63', english:'#2196f3', geografie:'#4caf50',
+  landbou:'#ff9800', lo:'#9c27b0', lewenswet:'#00bcd4', wiskundig:'#795548'
+};
+const SUBJ_NAMES = {
+  afrikaans:'Afrikaans', english:'English', geografie:'Geografie',
+  landbou:'Landbou', lo:'LO', lewenswet:'Lewenswet.', wiskundig:'Wisk. Gel.'
+};
+const SUBJ_FULL = {
+  afrikaans:'Afrikaans Huistaal', english:'English FAL', geografie:'Geografie',
+  landbou:'Landboubestuurspraktyke', lo:'Lewensorientering',
+  lewenswet:'Lewenswetenskappe', wiskundig:'Wiskundige Geletterdheid'
+};
+
+// ===== ASSESSMENT DATA =====
+const DATA = [
+  {id:'af1',s:'afrikaans',task:'Taak 1',type:'Mondeling',desc:'Luisterbegrip',total:15,date:'2026-06-15',q:1,w:10.0},
+  {id:'af2',s:'afrikaans',task:'Taak 2',type:'Taak',desc:'Skryf: Opstel',total:50,date:'2026-03-27',q:1,w:6.12,mark:'42/50',cont:5.14,preset:'done'},
+  {id:'af3',s:'afrikaans',task:'Taak 3',type:'Taak',desc:'Skryf: Transaksionele teks',total:25,date:'2026-03-27',q:1,w:3.06,preset:'process'},
+  {id:'af4',s:'afrikaans',task:'Taak 4',type:'Mondeling',desc:'Onvoorbereide toespraak',total:15,date:'2026-06-15',q:1,w:6.67},
+  {id:'af5',s:'afrikaans',task:'Taak 5',type:'Toets',desc:'Kwartaaltoets',total:35,date:'2026-03-02',q:1,w:4.28,preset:'process'},
+  {id:'af6',s:'afrikaans',task:'Taak 6',type:'Taak',desc:'Letterkunde-projek: Poesie + Prosa/Drama',total:35,date:'2026-06-26',q:2,w:4.28},
+  {id:'af7',s:'afrikaans',task:'Taak 7',type:'Mondeling',desc:'Voorbereide toespraak',total:10,date:'2026-06-15',q:2,w:6.67},
+  {id:'af81',s:'afrikaans',task:'Taak 8.1',type:'Eksamen',desc:'Junie: Leesbegrip, Opsomming, Taal',total:70,date:'2026-06-08',q:2,w:8.56},
+  {id:'af82',s:'afrikaans',task:'Taak 8.2',type:'Eksamen',desc:'Junie: Letterkunde',total:80,date:'2026-05-27',q:2,w:9.78},
+  {id:'af9',s:'afrikaans',task:'Taak 9',type:'Mondeling',desc:'Onvoorbereide lees',total:10,date:'2026-06-15',q:2,w:10.0},
+  {id:'af101',s:'afrikaans',task:'Taak 10.1',type:'Eksamen',desc:'Rekord: Leesbegrip, Opsomming, Taal',total:70,date:'2026-09-03',q:3,w:8.56},
+  {id:'af102',s:'afrikaans',task:'Taak 10.2',type:'Eksamen',desc:'Rekord: Letterkunde',total:80,date:'2026-09-08',q:3,w:9.79},
+  {id:'af103',s:'afrikaans',task:'Taak 10.3',type:'Eksamen',desc:'Rekord: Skryf',total:100,date:'2026-08-18',q:3,w:12.23},
+
+  {id:'en1',s:'english',task:'Taak 1',type:'Mondeling',desc:'Listening Comprehension',total:10,date:'2026-06-15',q:1,w:6.67},
+  {id:'en2',s:'english',task:'Taak 2',type:'Taak',desc:'Writing: Essay',total:50,date:'2026-03-27',q:1,w:6.01,mark:'35/50',cont:4.21,preset:'done'},
+  {id:'en3',s:'english',task:'Taak 3',type:'Taak',desc:'Writing: Transactional',total:30,date:'2026-03-27',q:1,w:3.60,preset:'process'},
+  {id:'en4',s:'english',task:'Taak 4',type:'Toets',desc:'Term test: Comprehension, Summary, Language',total:40,date:'2026-03-03',q:1,w:4.81,preset:'process'},
+  {id:'en5',s:'english',task:'Taak 5',type:'Mondeling',desc:'Prepared Reading',total:20,date:'2026-06-15',q:2,w:13.33},
+  {id:'en6',s:'english',task:'Taak 6',type:'Mondeling',desc:'Prepared Speech',total:20,date:'2026-06-15',q:2,w:13.33},
+  {id:'en7',s:'english',task:'Taak 7',type:'Taak',desc:'Literature Assignment',total:35,date:'2026-06-26',q:2,w:4.20},
+  {id:'en81',s:'english',task:'Taak 8.1',type:'Eksamen',desc:'June Exam P1: Reading, Summary, Visual, Language',total:80,date:'2026-06-10',q:2,w:9.61},
+  {id:'en82',s:'english',task:'Taak 8.2',type:'Eksamen',desc:'June Exam P2: Poetry + Novel',total:70,date:'2026-05-25',q:2,w:8.41},
+  {id:'en91',s:'english',task:'Taak 9.1',type:'Eksamen',desc:'Prelim P1: Reading, Summary, Visual, Language',total:80,date:'2026-08-25',q:3,w:9.61},
+  {id:'en92',s:'english',task:'Taak 9.2',type:'Eksamen',desc:'Prelim P2: Poetry + Novel',total:70,date:'2026-09-01',q:3,w:8.41},
+  {id:'en93',s:'english',task:'Taak 9.3',type:'Eksamen',desc:'Prelim P3: Essay, Longer trans., Shorter trans.',total:100,date:'2026-08-20',q:3,w:12.01},
+
+  {id:'ge1',s:'geografie',task:'Taak 1',type:'Toets',desc:'Kwartaaltoets - Kaart: Philippolis',total:60,date:'2026-03-05',q:1,w:15.0,preset:'process'},
+  {id:'ge2',s:'geografie',task:'Taak 2',type:'Taak',desc:'Navorsingstaak: Geografiese probleem',total:100,date:'2026-03-27',q:1,w:15.0,preset:'process'},
+  {id:'ge3',s:'geografie',task:'Taak 3',type:'Toets',desc:'Toets',total:60,date:'2026-05-11',q:2,w:15.0},
+  {id:'ge4',s:'geografie',task:'Taak 4',type:'Eksamen',desc:'Junie-eksamen - Kaart: Clarens A3',total:150,date:'2026-06-10',q:2,w:20.0},
+  {id:'ge5',s:'geografie',task:'Taak 5',type:'Toets',desc:'Kwartaaltoets - Kaart: Ceres A3',total:60,date:'2026-08-03',q:3,w:15.0},
+  {id:'ge61',s:'geografie',task:'Taak 6.1',type:'Eksamen',desc:'Rekordeksamen 1 - Kaart: Lainsburg A3',total:150,date:'2026-08-19',q:3,w:10.0},
+  {id:'ge62',s:'geografie',task:'Taak 6.2',type:'Eksamen',desc:'Rekordeksamen 2 - Kaart: Lainsburg A3',total:150,date:'2026-09-08',q:3,w:10.0},
+
+  {id:'lb1',s:'landbou',task:'Taak 1',type:'Taak',desc:'Praktiese ondersoek: Plaasbeplanning',total:50,date:'2026-03-27',q:1,w:4.17},
+  {id:'lb2',s:'landbou',task:'Taak 2',type:'Toets',desc:'Kwartaaltoets',total:75,date:'2026-03-03',q:1,w:12.5,preset:'process'},
+  {id:'lb3',s:'landbou',task:'Taak 3',type:'Eksamen',desc:'Junie-eksamen',total:200,date:'2026-06-01',q:2,w:16.67},
+  {id:'lb4',s:'landbou',task:'Taak 4',type:'Eksamen',desc:'Rekord eksamen',total:200,date:'2026-09-04',q:3,w:16.66},
+  {id:'lb51',s:'landbou',task:'Taak 5.1',type:'PAT',desc:'PAT: Produksieplan - diereproduksie',total:100,date:'2026-08-03',q:1,w:10.0},
+  {id:'lb52',s:'landbou',task:'Taak 5.2',type:'PAT',desc:'PAT: Praktiese aktiwiteite',total:100,date:'2026-08-03',q:1,w:25.0},
+  {id:'lb53',s:'landbou',task:'Taak 5.3',type:'PAT',desc:'PAT: Toets (1u30m)',total:100,date:'2026-08-06',q:3,w:10.0},
+  {id:'lb54',s:'landbou',task:'Taak 5.4',type:'PAT',desc:'PAT: Logboek (min 40 uur)',total:40,date:'2026-08-03',q:1,w:5.0},
+
+  {id:'lo1',s:'lo',task:'Taak 1',type:'Taak',desc:'Brongebaseerde Taak',total:90,date:'2026-03-27',q:1,w:20.0,preset:'process'},
+  {id:'lo2',s:'lo',task:'Taak 2',type:'Eksamen',desc:'Junie-eksamen',total:100,date:'2026-06-03',q:2,w:25.0},
+  {id:'lo3',s:'lo',task:'Taak 3',type:'Taak',desc:'Navorsingsprojek',total:90,date:'2026-08-27',q:3,w:20.0},
+  {id:'lo4',s:'lo',task:'Taak 4',type:'Eksamen',desc:'Novembereksamen',total:100,date:'2026-08-27',q:3,w:25.0},
+  {id:'lo51',s:'lo',task:'Taak 5.1',type:'Taak',desc:'LO: Hartsgesondheid',total:10,date:'2026-03-27',q:1,w:2.5,mark:'6.5/10',cont:1.63,preset:'done'},
+  {id:'lo52',s:'lo',task:'Taak 5.2',type:'Taak',desc:'LO: Sportaktiwiteite',total:20,date:'2026-06-26',q:2,w:5.0},
+  {id:'lo53',s:'lo',task:'Taak 5.3',type:'Taak',desc:'LO: Maaltydplan',total:10,date:'2026-08-27',q:3,w:2.5},
+
+  {id:'lw1',s:'lewenswet',task:'Taak 1',type:'Taak',desc:'Prakties: DNS-Ekstraksie',total:30,date:'2026-03-06',q:1,w:10.0,mark:'14/30',cont:4.67,preset:'done'},
+  {id:'lw2',s:'lewenswet',task:'Taak 2',type:'Toets',desc:'Kwartaaltoets',total:75,date:'2026-03-24',q:1,w:10.0},
+  {id:'lw3',s:'lewenswet',task:'Taak 3',type:'Taak',desc:'Prakties: Genetika en Oorerflikheid',total:30,date:'2026-05-14',q:2,w:10.0},
+  {id:'lw4',s:'lewenswet',task:'Taak 4',type:'Toets',desc:'Kwartaaltoets',total:75,date:'2026-05-13',q:2,w:10.0},
+  {id:'lw5',s:'lewenswet',task:'Taak 5',type:'Eksamen',desc:'Junie-eksamen',total:150,date:'2026-06-26',q:2,w:20.0},
+  {id:'lw6',s:'lewenswet',task:'Taak 6',type:'Taak',desc:'Opdrag: Evolusie en Natuurlike Seleksie',total:50,date:'2026-08-12',q:3,w:10.0},
+  {id:'lw71',s:'lewenswet',task:'Taak 7.1',type:'Eksamen',desc:'Rekord eksamen 1',total:150,date:'2026-09-04',q:3,w:15.0},
+  {id:'lw72',s:'lewenswet',task:'Taak 7.2',type:'Eksamen',desc:'Rekord eksamen 2',total:150,date:'2026-09-07',q:3,w:15.0},
+
+  {id:'wg1',s:'wiskundig',task:'Taak 1',type:'Taak',desc:'Ondersoek: Datahantering en finansies',total:50,date:'2026-03-27',q:1,w:10.0,mark:'42/50',cont:8.40,preset:'done'},
+  {id:'wg2',s:'wiskundig',task:'Taak 2',type:'Toets',desc:'Kwartaaltoets',total:50,date:'2026-03-10',q:1,w:15.0,preset:'process'},
+  {id:'wg3',s:'wiskundig',task:'Taak 3',type:'Taak',desc:'Opdrag: Finansies, meting en kaartwerk',total:50,date:'2026-06-26',q:2,w:10.0},
+  {id:'wg41',s:'wiskundig',task:'Taak 4.1',type:'Eksamen',desc:'Junie-eksamen 1',total:150,date:'2026-06-19',q:2,w:12.5},
+  {id:'wg42',s:'wiskundig',task:'Taak 4.2',type:'Eksamen',desc:'Junie-eksamen 2',total:150,date:'2026-06-22',q:2,w:12.5},
+  {id:'wg5',s:'wiskundig',task:'Taak 5',type:'Toets',desc:'Kwartaaltoets',total:50,date:'2026-08-07',q:3,w:15.0},
+  {id:'wg61',s:'wiskundig',task:'Taak 6.1',type:'Eksamen',desc:'Rekordeksamen 1',total:150,date:'2026-08-28',q:3,w:12.5},
+  {id:'wg62',s:'wiskundig',task:'Taak 6.2',type:'Eksamen',desc:'Rekordeksamen 2',total:150,date:'2026-08-31',q:3,w:12.5},
+];
+
+// ===== ACHIEVEMENTS =====
+const ACHIEVEMENTS = [
+  {id:'first_done', icon:'🎯', name:'Eerste Taak', desc:'Merk jou eerste taak klaar', xp:50, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 1},
+  {id:'five_done', icon:'⭐', name:'Vyf Sterk', desc:'5 take klaar gemerk', xp:100, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 5},
+  {id:'ten_done', icon:'🔥', name:'Op Dreef', desc:'10 take klaar', xp:200, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 10},
+  {id:'twenty_done', icon:'💪', name:'Powerhouse', desc:'20 take klaar', xp:400, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 20},
+  {id:'half_done', icon:'🏆', name:'Halfpad', desc:'Helfte van alle take klaar', xp:500, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= Math.floor(DATA.length/2)},
+  {id:'all_done', icon:'👑', name:'Matriek Boss', desc:'Alle take klaar!', xp:1000, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= DATA.length},
+  {id:'first_exam', icon:'📝', name:'Eksamen Oorlewer', desc:'Eerste eksamen klaar', xp:150, check: s => DATA.some(a => a.type==='Eksamen' && s.done[a.id])},
+  {id:'profile_set', icon:'📸', name:'Selfie', desc:'Profiel foto opgelaai', xp:30, check: s => !!s.profile?.avatar},
+  {id:'note_taker', icon:'📋', name:'Nota Nemer', desc:'Eerste nota bygevoeg', xp:30, check: s => Object.keys(s.notes||{}).some(k => s.notes[k])},
+  {id:'streak_3', icon:'🔥', name:'3 Dae Streak', desc:'3 dae aanmekaar ingecheck', xp:75, check: s => (s.streak||0) >= 3},
+  {id:'streak_7', icon:'💥', name:'Week Warrior', desc:'7 dae streak', xp:200, check: s => (s.streak||0) >= 7},
+  {id:'all_subjects', icon:'🌈', name:'Allrounder', desc:'Ten minste 1 taak per vak klaar', xp:300, check: s => {
+    const subjs = new Set(DATA.filter(a=>s.done[a.id]).map(a=>a.s));
+    return subjs.size >= 7;
+  }},
+];
+
+const LEVELS = [
+  {min:0, title:'Beginner 📚'},
+  {min:100, title:'Student 📖'},
+  {min:250, title:'Studeerder 🧠'},
+  {min:500, title:'Slim Kop 🎓'},
+  {min:800, title:'Akademiese Ster ⭐'},
+  {min:1200, title:'Kenner 🔬'},
+  {min:1800, title:'Meester 🏅'},
+  {min:2500, title:'Matriek Legende 👑'},
+];
+
+// ===== STATE =====
+let state = JSON.parse(localStorage.getItem('studym8_state') || '{}');
+if (!state.done) state.done = {};
+if (!state.notes) state.notes = {};
+if (!state.marks) state.marks = {};
+if (!state.achievements) state.achievements = {};
+if (!state.friends) state.friends = [];
+if (!state.profile) state.profile = {name:'Marita', surname:'Postma', school:'Impaq', grade:'12', motto:'Werk hard, droom groot', avatar:null};
+if (!state.xp) state.xp = 0;
+if (!state.streak) state.streak = 0;
+if (!state.lastVisit) state.lastVisit = null;
+if (!state.subjects) state.subjects = Object.keys(SUBJ_FULL);
+
+// Init presets
+DATA.forEach(a => {
+  if (a.preset === 'done' && !(a.id in state.done)) state.done[a.id] = true;
+  if (a.mark && !state.marks[a.id]) state.marks[a.id] = a.mark;
+});
+
+// Streak logic
+(function updateStreak() {
+  const todayStr = TODAY.toISOString().split('T')[0];
+  if (state.lastVisit) {
+    const last = new Date(state.lastVisit);
+    const diff = Math.floor((TODAY - last) / (1000*60*60*24));
+    if (diff === 1) state.streak++;
+    else if (diff > 1) state.streak = 1;
+  } else {
+    state.streak = 1;
+  }
+  state.lastVisit = todayStr;
+})();
+
+// Calc initial XP from achievements
+(function calcXP() {
+  let xp = 0;
+  ACHIEVEMENTS.forEach(ach => {
+    if (state.achievements[ach.id]) xp += ach.xp;
+  });
+  state.xp = xp;
+})();
+
+saveState();
+
+function saveState() { localStorage.setItem('studym8_state', JSON.stringify(state)); }
+
+function getStatus(a) {
+  if (state.done[a.id]) return 'done';
+  if (a.preset === 'process' && !state.done[a.id]) return 'process';
+  const diff = Math.ceil((new Date(a.date) - TODAY) / (1000*60*60*24));
+  if (diff < 0) return 'overdue';
+  if (diff <= 7) return 'urgent';
+  if (diff <= 14) return 'soon';
+  return 'upcoming';
+}
+
+function getDaysUntil(ds) { return Math.ceil((new Date(ds) - TODAY) / (1000*60*60*24)); }
+
+function toggleDone(id, ev) {
+  if (ev) ev.stopPropagation();
+  const wasDone = state.done[id];
+  state.done[id] = !wasDone;
+  if (!wasDone) {
+    // Just completed - check achievements
+    checkAchievements();
+    confettiBurst();
+  }
+  saveState();
+  renderAll();
+  toast(state.done[id] ? '✓ Klaar gemerk!' : 'Ontmerk');
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function typeClass(t) { return 'tp-' + t.toLowerCase(); }
+
+// ===== RENDER HELPERS =====
+function renderItem(a) {
+  const d = new Date(a.date);
+  const days = getDaysUntil(a.date);
+  const status = getStatus(a);
+  const isDone = state.done[a.id];
+  const mark = state.marks[a.id] || a.mark;
+  const note = state.notes[a.id] || '';
+
+  let statusHtml = '';
+  if (isDone) statusHtml = `<span class="status-pill sp-done">Klaar${mark?' '+mark:''}</span>`;
+  else if (status==='process') statusHtml = `<span class="status-pill sp-process">Besig</span>`;
+  else if (status==='urgent'||status==='overdue') statusHtml = `<span class="status-pill sp-urgent">${days<0?'Verlaat!':days+' dae'}</span>`;
+  else if (status==='soon') statusHtml = `<span class="status-pill sp-urgent">${days} dae</span>`;
+  else statusHtml = `<span class="status-pill sp-upcoming">${days} dae</span>`;
+
+  let prep = '';
+  if (!isDone && a.type==='Eksamen') {
+    if (days>14&&days<=42) prep = `<div class="prep-hint">Begin voorberei! Eksamen oor ${days} dae</div>`;
+    else if (days>42) { const ps=new Date(d); ps.setDate(ps.getDate()-28); prep=`<div class="prep-hint">Begin voorberei teen ${ps.getDate()} ${MONTHS_SHORT[ps.getMonth()]}</div>`; }
+  }
+
+  return `<div class="assess-item ${isDone?'is-done':''}" style="border-left-color:${SUBJ_COLORS[a.s]}" onclick="toggleExpand(this)">
+    <button class="check-btn ${isDone?'checked':''}" onclick="toggleDone('${a.id}',event)">
+      ${isDone?'&#10003;':''}
+    </button>
+    <div class="date-col">
+      <div class="day">${d.getDate()}</div>
+      <div class="mon">${MONTHS_SHORT[d.getMonth()]}</div>
+    </div>
+    <div class="info-col">
+      <div class="subj-line">
+        <span class="subj-pill" style="background:${SUBJ_COLORS[a.s]}">${SUBJ_NAMES[a.s]}</span>
+        <span class="type-pill ${typeClass(a.type)}">${a.type}</span>
+      </div>
+      <div class="task-name">${a.task}: ${a.desc}</div>
+      ${prep}
+    </div>
+    <div class="meta-col">
+      <div class="total-mark">/${a.total}</div>
+      <div class="weight-txt">${a.w}%</div>
+      ${statusHtml}
+    </div>
+    <div class="expand-row" onclick="event.stopPropagation()">
+      <div style="margin-bottom:4px"><b>Kwartaal ${a.q}</b> | Gewig: ${a.w}%</div>
+      ${mark?`<div class="mark-display">Punt: ${mark}</div>`:''}
+      <input class="note-input" placeholder="Voeg nota by..." value="${(note||'').replace(/"/g,'&quot;')}" onchange="saveNote('${a.id}',this.value)">
+    </div>
+  </div>`;
+}
+
+function toggleExpand(el) { el.classList.toggle('expanded'); }
+function saveNote(id,val) { state.notes[id]=val; saveState(); }
+
+// Filter data by active subjects
+function activeData() { return DATA.filter(a => state.subjects.includes(a.s)); }
+
+// ===== HOME =====
+function renderHome() {
+  const data = activeData().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const total=data.length, done=data.filter(a=>state.done[a.id]).length;
+  const urgentCount = data.filter(a=>{const s=getStatus(a); return s==='urgent'||s==='overdue'||s==='process';}).length;
+
+  document.getElementById('todayBadge').textContent = `${TODAY.getDate()} ${MONTHS_SHORT[TODAY.getMonth()]}`;
+  document.getElementById('streakBadge').textContent = `🔥 ${state.streak}`;
+
+  // Update header with profile
+  const p = state.profile;
+  document.getElementById('headerName').textContent = p.name ? `${p.name} se Planner` : 'StudyM8';
+  if (p.avatar) {
+    document.getElementById('headerAvatar').innerHTML = `<img src="${p.avatar}">`;
+  } else {
+    document.getElementById('headerAvatar').innerHTML = `<span class="avatar-placeholder">${(p.name||'M')[0]}</span>`;
+  }
+
+  // XP
+  const level = getLevel();
+  const nextLevel = LEVELS[LEVELS.indexOf(level)+1] || {min:level.min+1000};
+  const xpInLevel = state.xp - level.min;
+  const xpNeeded = nextLevel.min - level.min;
+  const xpPct = Math.min(100, Math.round((xpInLevel/xpNeeded)*100));
+  document.getElementById('xpWidget').innerHTML = `
+    <div class="xp-header">
+      <span class="xp-level">${level.title}</span>
+      <span class="xp-points">${state.xp} XP</span>
+    </div>
+    <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${xpPct}%"></div></div>
+    <div class="level-title">Nog ${nextLevel.min-state.xp} XP tot volgende vlak</div>
+  `;
+
+  const next = data.find(a => !state.done[a.id] && getDaysUntil(a.date)>=0);
+  if (next) {
+    const nd=new Date(next.date), days=getDaysUntil(next.date);
+    document.getElementById('countdownWidget').innerHTML = `
+      <div class="cw-label">Volgende assessering oor</div>
+      <div class="cw-days">${days} dae</div>
+      <div class="cw-task">${SUBJ_FULL[next.s]}: ${next.task}</div>
+      <div class="cw-date">${nd.getDate()} ${MONTHS[nd.getMonth()]} ${nd.getFullYear()}</div>
+    `;
+  }
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-num" style="color:var(--done)">${done}</div><div class="stat-label">Klaar</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--urgent)">${urgentCount}</div><div class="stat-label">Dringend</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--upcoming)">${total-done}</div><div class="stat-label">Nog oor</div></div>
+  `;
+
+  // Update nav badge
+  const badge = document.querySelector('[data-page="home"] .nav-badge');
+  if (urgentCount > 0) {
+    if (!badge) {
+      const b = document.createElement('span');
+      b.className = 'nav-badge';
+      b.textContent = urgentCount;
+      document.querySelector('[data-page="home"]').appendChild(b);
+    } else badge.textContent = urgentCount;
+  } else if (badge) badge.remove();
+
+  const urgentItems = data.filter(a=>{const s=getStatus(a); return s==='urgent'||s==='overdue'||s==='process'||s==='soon';});
+  document.getElementById('urgentList').innerHTML = urgentItems.length
+    ? urgentItems.map(a=>renderItem(a)).join('')
+    : '<div class="card" style="text-align:center;color:var(--text-light)">Geen dringende take!</div>';
+
+  const soonItems = data.filter(a=>{if(state.done[a.id])return false; const d=getDaysUntil(a.date),s=getStatus(a); return d>0&&d<=30&&s==='upcoming';});
+  document.getElementById('soonList').innerHTML = soonItems.length
+    ? soonItems.map(a=>renderItem(a)).join('')
+    : '<div class="card" style="text-align:center;color:var(--text-light)">Niks in volgende 30 dae nie</div>';
+}
+
+// ===== TIMELINE =====
+let currentFilter = 'all';
+
+function setFilter(subj) {
+  currentFilter = subj;
+  // Update dropdown
+  document.getElementById('subjDropdown').value = subj;
+  // Update chips
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.dataset.subj===subj));
+  renderTimeline();
+}
+
+function renderFilters() {
+  // Dropdown
+  let ddHtml = '<option value="all">Alle Vakke</option>';
+  Object.keys(SUBJ_FULL).forEach(k => {
+    if (state.subjects.includes(k))
+      ddHtml += `<option value="${k}">${SUBJ_FULL[k]}</option>`;
+  });
+  document.getElementById('subjDropdown').innerHTML = ddHtml;
+
+  // Chips for status
+  document.getElementById('filterRow').innerHTML = `
+    <span class="chip active" data-subj="all" onclick="setFilter('all')">Alles</span>
+    ${state.subjects.map(k=>`<span class="chip" data-subj="${k}" onclick="setFilter('${k}')" style="border-color:${SUBJ_COLORS[k]}">${SUBJ_NAMES[k]}</span>`).join('')}
+  `;
+}
+
+function renderTimeline() {
+  const data = activeData().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const filtered = currentFilter==='all' ? data : data.filter(a=>a.s===currentFilter);
+  let html='', curMonth='';
+  filtered.forEach(a=>{
+    const d=new Date(a.date), mk=MONTHS[d.getMonth()]+' '+d.getFullYear();
+    if(mk!==curMonth){
+      curMonth=mk;
+      const cnt=filtered.filter(x=>{const xd=new Date(x.date); return MONTHS[xd.getMonth()]+' '+xd.getFullYear()===mk;}).length;
+      html+=`<div class="month-divider">${mk} <span class="month-count-badge">${cnt}</span></div>`;
+    }
+    html+=renderItem(a);
+  });
+  document.getElementById('timelineList').innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--text-light)">Geen assesserings gevind nie</div>';
+}
+
+// ===== CALENDAR =====
+let calMonth=TODAY.getMonth(), calYear=TODAY.getFullYear();
+function changeMonth(dir) { calMonth+=dir; if(calMonth>11){calMonth=0;calYear++;} if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+
+function renderCalendar() {
+  document.getElementById('calTitle').textContent = MONTHS[calMonth]+' '+calYear;
+  const first = new Date(calYear,calMonth,1).getDay();
+  const days = new Date(calYear,calMonth+1,0).getDate();
+  const data = activeData();
+  let html='';
+  DAYS_SHORT.forEach(d=>html+=`<div class="cal-day-header">${d}</div>`);
+  for(let i=0;i<first;i++) html+='<div class="cal-day empty"></div>';
+  for(let d=1;d<=days;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isT = d===TODAY.getDate()&&calMonth===TODAY.getMonth()&&calYear===TODAY.getFullYear();
+    const da = data.filter(a=>a.date===ds);
+    let dots = da.map(a=>`<span class="cal-dot" style="background:${SUBJ_COLORS[a.s]}"></span>`).join('');
+    html+=`<div class="cal-day ${isT?'today':''}" onclick="showDayPopup('${ds}')"><div class="day-num">${d}</div><div>${dots}</div></div>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+
+  const monthA = data.filter(a=>{const d=new Date(a.date); return d.getMonth()===calMonth&&d.getFullYear()===calYear;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  document.getElementById('calMonthList').innerHTML = monthA.length ? monthA.map(a=>renderItem(a)).join('') : '<div class="card" style="text-align:center;color:var(--text-light)">Geen assesserings hierdie maand nie</div>';
+}
+
+function showDayPopup(ds) {
+  const da=activeData().filter(a=>a.date===ds);
+  if(!da.length) return;
+  const d=new Date(ds);
+  let html=`<button class="modal-close" onclick="closeModal()">&times;</button>
+    <h3>${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}</h3>
+    <div style="font-size:0.82em;color:var(--text-light);margin-bottom:12px">${da.length} assessering(s)</div>`;
+  da.forEach(a=>html+=renderItem(a));
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+
+// ===== SOCIAL =====
+function switchSocialTab(tab, btn) {
+  document.querySelectorAll('[id^="socialTab-"]').forEach(t=>t.style.display='none');
+  document.getElementById('socialTab-'+tab).style.display='block';
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderSocial() {
+  renderLeaderboard();
+  renderFriends();
+  renderAchievements();
+}
+
+function renderLeaderboard() {
+  const data = activeData();
+  const myDone = data.filter(a=>state.done[a.id]).length;
+  const myPct = Math.round((myDone/data.length)*100);
+  const p = state.profile;
+
+  // Build leaderboard with friends + self
+  let entries = [{name:`${p.name} ${p.surname}`, pct:myPct, xp:state.xp, avatar:p.avatar, me:true}];
+  state.friends.forEach(f => {
+    entries.push({name:f.name, pct:f.progress||0, xp:f.xp||0, avatar:f.avatar, me:false});
+  });
+  entries.sort((a,b) => b.xp - a.xp || b.pct - a.pct);
+
+  let html = '';
+  entries.forEach((e,i) => {
+    const rankClass = i===0?'lb-rank-1':i===1?'lb-rank-2':i===2?'lb-rank-3':'lb-rank-other';
+    const avatarHtml = e.avatar
+      ? `<img src="${e.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : e.name[0];
+    html += `<div class="lb-item ${e.me?'me':''}">
+      <div class="lb-rank ${rankClass}">${i+1}</div>
+      <div class="friend-avatar">${avatarHtml}</div>
+      <div class="lb-info">
+        <div class="lb-name">${e.name} ${e.me?'(Jy)':''}</div>
+        <div class="lb-detail">${e.pct}% klaar | ${e.xp} XP</div>
+      </div>
+      <div class="lb-score">${e.xp}</div>
+    </div>`;
+  });
+
+  if (entries.length <= 1) {
+    html += '<div class="card" style="text-align:center;color:var(--text-light);margin-top:12px">Deel jou kode met vriende om die ranglys te vul!</div>';
+  }
+
+  document.getElementById('socialTab-leaderboard').innerHTML = html;
+}
+
+function renderFriends() {
+  let html = '';
+  if (state.friends.length === 0) {
+    html = `<div class="card" style="text-align:center;padding:30px">
+      <div style="font-size:2.5em;margin-bottom:8px">👥</div>
+      <div style="font-weight:700;margin-bottom:6px">Nog geen vriende nie</div>
+      <div style="font-size:0.82em;color:var(--text-light)">Deel jou vordering en laai vriende se data in!</div>
+    </div>`;
+  } else {
+    state.friends.forEach((f,i) => {
+      html += `<div class="friend-card">
+        <div class="friend-avatar">${f.avatar ? `<img src="${f.avatar}">` : (f.name||'?')[0]}</div>
+        <div class="friend-info">
+          <div class="friend-name">${f.name}</div>
+          <div class="friend-status">${f.school||''} | ${f.xp||0} XP</div>
+        </div>
+        <div class="friend-progress">
+          <div class="friend-pct">${f.progress||0}%</div>
+          <div class="friend-pct-label">klaar</div>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('socialTab-friends').innerHTML = html;
+}
+
+function renderAchievements() {
+  let html = '<div class="achievement-grid">';
+  ACHIEVEMENTS.forEach(ach => {
+    const unlocked = state.achievements[ach.id];
+    html += `<div class="achievement ${unlocked?'unlocked':'locked'}">
+      <div class="ach-icon">${ach.icon}</div>
+      <div class="ach-name">${ach.name}</div>
+      <div class="ach-desc">${ach.desc}</div>
+      <div style="font-size:0.6em;color:var(--gold);font-weight:700;margin-top:2px">+${ach.xp} XP</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('socialTab-achievements').innerHTML = html;
+}
+
+function shareProgress() {
+  const data = activeData();
+  const done = data.filter(a=>state.done[a.id]).length;
+  const pct = Math.round((done/data.length)*100);
+  const p = state.profile;
+
+  const shareData = {
+    name: `${p.name} ${p.surname}`,
+    school: p.school,
+    progress: pct,
+    xp: state.xp,
+    achievements: Object.keys(state.achievements).filter(k=>state.achievements[k]).length,
+    date: TODAY.toISOString().split('T')[0]
+  };
+
+  const shareText = `📚 ${p.name} se StudyM8 vordering:\n✅ ${pct}% klaar (${done}/${data.length} take)\n⭐ ${state.xp} XP | 🏆 ${shareData.achievements} prestasies\n🔥 ${state.streak} dae streak\n\nData kode: ${btoa(JSON.stringify(shareData))}`;
+
+  if (navigator.share) {
+    navigator.share({title:'StudyM8 Vordering', text:shareText}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(shareText).then(() => toast('Gekopieer na clipboard!')).catch(()=>{
+      showModal('Deel Vordering', `<textarea style="width:100%;height:120px;font-size:0.82em;border:1px solid #ddd;border-radius:8px;padding:8px" readonly>${shareText}</textarea><p style="font-size:0.78em;color:var(--text-light);margin-top:8px">Kopieer en stuur via WhatsApp!</p>`);
+    });
+  }
+}
+
+function showImportModal() {
+  showModal('Laai Vriend se Data', `
+    <p style="font-size:0.82em;color:var(--text-light);margin-bottom:12px">Plak jou vriend se data kode hieronder:</p>
+    <textarea id="importCode" style="width:100%;height:80px;border:1px solid #ddd;border-radius:8px;padding:8px;font-size:0.82em" placeholder="Plak kode hier..."></textarea>
+    <button class="modal-btn" onclick="importFriend()">Voeg By</button>
+  `);
+}
+
+function importFriend() {
+  const code = document.getElementById('importCode').value.trim();
+  try {
+    // Try to find base64 data code in text
+    const match = code.match(/Data kode: (.+)/);
+    const raw = match ? match[1] : code;
+    const data = JSON.parse(atob(raw));
+    if (data.name) {
+      // Check duplicate
+      if (!state.friends.some(f=>f.name===data.name)) {
+        state.friends.push(data);
+        saveState();
+        renderSocial();
+        closeModal();
+        toast(`${data.name} bygevoeg!`);
+      } else {
+        // Update existing
+        const idx = state.friends.findIndex(f=>f.name===data.name);
+        state.friends[idx] = {...state.friends[idx], ...data};
+        saveState();
+        renderSocial();
+        closeModal();
+        toast(`${data.name} opgedateer!`);
+      }
+    }
+  } catch(e) {
+    toast('Ongeldige kode, probeer weer');
+  }
+}
+
+function showModal(title, bodyHtml) {
+  document.getElementById('modalContent').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h3>${title}</h3>
+    ${bodyHtml}
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+// ===== PROFILE =====
+function renderProfile() {
+  const p = state.profile;
+  document.getElementById('profName').value = p.name || '';
+  document.getElementById('profSurname').value = p.surname || '';
+  document.getElementById('profSchool').value = p.school || '';
+  document.getElementById('profGrade').value = p.grade || '12';
+  document.getElementById('profMotto').value = p.motto || '';
+
+  document.getElementById('profileDisplayName').textContent = `${p.name||''} ${p.surname||''}`;
+  document.getElementById('profileDisplayMotto').textContent = p.motto ? `"${p.motto}"` : '';
+  document.getElementById('profileDisplaySchool').textContent = `${p.school||''} - Graad ${p.grade||'12'}`;
+
+  if (p.avatar) {
+    document.getElementById('profileAvatarImg').src = p.avatar;
+    document.getElementById('profileAvatarImg').style.display = 'block';
+    document.getElementById('profileAvatarPlaceholder').style.display = 'none';
+  } else {
+    document.getElementById('profileAvatarImg').style.display = 'none';
+    document.getElementById('profileAvatarPlaceholder').style.display = 'block';
+    document.getElementById('profileAvatarPlaceholder').textContent = (p.name||'M')[0];
+  }
+
+  // Subject toggles
+  let togHtml = '';
+  Object.keys(SUBJ_FULL).forEach(k => {
+    const active = state.subjects.includes(k);
+    togHtml += `<span class="subj-toggle-chip ${active?'active':''}" style="${active?'background:'+SUBJ_COLORS[k]+';border-color:transparent':'border-color:#ddd'}" onclick="toggleSubject('${k}', this)">${SUBJ_FULL[k]}</span>`;
+  });
+  document.getElementById('subjectToggles').innerHTML = togHtml;
+
+  // Progress summary
+  let progHtml = '';
+  Object.keys(SUBJ_FULL).forEach(k => {
+    if (!state.subjects.includes(k)) return;
+    const tasks = DATA.filter(a=>a.s===k);
+    const done = tasks.filter(a=>state.done[a.id]).length;
+    const pct = Math.round((done/tasks.length)*100);
+    const totalCont = tasks.reduce((s,a)=>s+(a.cont||0),0);
+    progHtml += `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:0.82em;font-weight:600">
+        <span style="color:${SUBJ_COLORS[k]}">${SUBJ_NAMES[k]}</span>
+        <span>${done}/${tasks.length} (${pct}%)</span>
+      </div>
+      <div class="prog-bar-bg" style="margin-top:4px"><div class="prog-bar-fill" style="width:${pct}%;background:${SUBJ_COLORS[k]}"></div></div>
+    </div>`;
+  });
+  document.getElementById('profileProgress').innerHTML = progHtml;
+}
+
+function saveProfile() {
+  state.profile.name = document.getElementById('profName').value;
+  state.profile.surname = document.getElementById('profSurname').value;
+  state.profile.school = document.getElementById('profSchool').value;
+  state.profile.grade = document.getElementById('profGrade').value;
+  state.profile.motto = document.getElementById('profMotto').value;
+  saveState();
+  renderProfile();
+}
+
+function handleAvatarUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    // Resize to keep storage small
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const size = 200;
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(size/img.width, size/img.height);
+      const w=img.width*scale, h=img.height*scale;
+      ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h);
+      state.profile.avatar = canvas.toDataURL('image/jpeg', 0.7);
+      saveState();
+      renderProfile();
+      renderHome();
+      checkAchievements();
+      toast('Profiel foto opgedateer!');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleSubject(k, el) {
+  const idx = state.subjects.indexOf(k);
+  if (idx >= 0) state.subjects.splice(idx,1);
+  else state.subjects.push(k);
+  saveState();
+  renderAll();
+}
+
+function exportAllData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'studym8_backup.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Data geeksporteer!');
+}
+
+function showResetConfirm() {
+  showModal('Herstel Alles', `
+    <p style="font-size:0.85em;margin-bottom:14px">Is jy seker? Dit sal al jou vordering, notas, en profiel uitvee.</p>
+    <button class="modal-btn" style="background:var(--urgent)" onclick="resetAll()">Ja, Herstel</button>
+    <button class="modal-btn modal-btn-outline" style="margin-top:6px" onclick="closeModal()">Kanselleer</button>
+  `);
+}
+
+function resetAll() {
+  localStorage.removeItem('studym8_state');
+  location.reload();
+}
+
+function showStreakInfo() {
+  showModal('🔥 Streak', `
+    <div style="text-align:center">
+      <div style="font-size:3em">🔥</div>
+      <div style="font-size:1.5em;font-weight:800;margin:8px 0">${state.streak} Dae</div>
+      <p style="font-size:0.85em;color:var(--text-light)">Jy het ${state.streak} dae aanmekaar die app oopgemaak. Hou so aan!</p>
+    </div>
+  `);
+}
+
+// ===== ACHIEVEMENTS =====
+function checkAchievements() {
+  ACHIEVEMENTS.forEach(ach => {
+    if (state.achievements[ach.id]) return;
+    if (ach.check(state)) {
+      state.achievements[ach.id] = true;
+      state.xp += ach.xp;
+      saveState();
+      showAchPopup(ach);
+    }
+  });
+}
+
+function showAchPopup(ach) {
+  document.getElementById('achPopupIcon').textContent = ach.icon;
+  document.getElementById('achPopupTitle').textContent = ach.name;
+  document.getElementById('achPopupDesc').textContent = ach.desc;
+  document.getElementById('achPopupXP').textContent = `+${ach.xp} XP`;
+  document.getElementById('achPopup').classList.add('show');
+  confettiBurst();
+}
+
+function closeAchPopup() {
+  document.getElementById('achPopup').classList.remove('show');
+  renderAll();
+}
+
+function getLevel() {
+  let level = LEVELS[0];
+  LEVELS.forEach(l => { if (state.xp >= l.min) level = l; });
+  return level;
+}
+
+// ===== CONFETTI =====
+function confettiBurst() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#e91e63','#2196f3','#4caf50','#ff9800','#9c27b0','#ffc107','#00bcd4'];
+
+  for (let i=0; i<60; i++) {
+    particles.push({
+      x: canvas.width/2 + (Math.random()-0.5)*100,
+      y: canvas.height/2,
+      vx: (Math.random()-0.5)*12,
+      vy: Math.random()*-12 - 4,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      size: Math.random()*6 + 3,
+      life: 1,
+      rotation: Math.random()*360,
+      rotSpeed: (Math.random()-0.5)*10
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.3;
+      p.life -= 0.015;
+      p.rotation += p.rotSpeed;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI/180);
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      ctx.restore();
+    });
+    frame++;
+    if (alive && frame < 120) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  animate();
+}
+
+// ===== NAV =====
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
+  if (page==='profile') renderProfile();
+  if (page==='social') renderSocial();
+  renderAll();
+}
+
+function renderAll() {
+  renderHome();
+  renderFilters();
+  renderTimeline();
+  renderCalendar();
+}
+
+// Init
+renderAll();
+renderProfile();
+renderSocial();
+checkAchievements();
+
+// PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
