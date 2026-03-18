@@ -717,7 +717,7 @@ body {
   </button>
   <div class="section-title">Urgent & In Progress</div>
   <div id="urgentList"></div>
-  <div class="section-title" style="margin-top:16px">Coming Up (30 days)</div>
+  <div class="section-title" style="margin-top:16px">Coming Up Next</div>
   <div id="soonList"></div>
 </div>
 
@@ -1317,10 +1317,17 @@ function renderHome() {
     ? urgentItems.map(a=>renderItem(a)).join('')
     : '<div class="card" style="text-align:center;color:var(--text-light)">No urgent tasks!</div>';
 
-  const soonItems = data.filter(a=>{if(state.done[a.id])return false; const d=getDaysUntil(a.date),s=getStatus(a); return d>0&&d<=30&&s==='upcoming';});
+  // "Coming Up" shows tasks 1-60 days out that aren't already in the urgent section
+  const urgentIds = new Set(urgentItems.map(a => a.id));
+  const soonItems = data.filter(a => {
+    if (state.done[a.id]) return false;
+    if (urgentIds.has(a.id)) return false;
+    const d = getDaysUntil(a.date);
+    return d > 0 && d <= 60;
+  });
   document.getElementById('soonList').innerHTML = soonItems.length
     ? soonItems.map(a=>renderItem(a)).join('')
-    : '<div class="card" style="text-align:center;color:var(--text-light)">Nothing in the next 30 days</div>';
+    : `<div class="card" style="text-align:center;color:var(--text-light)">${urgentItems.length > 0 ? 'All upcoming tasks are shown above' : 'Nothing coming up'}</div>`;
 }
 
 // ===== TIMELINE =====
