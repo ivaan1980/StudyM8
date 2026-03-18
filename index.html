@@ -524,6 +524,17 @@ body {
   transition:all 0.2s;
 }
 .study-block.is-done { opacity:0.5; }
+.study-block.template { background:#f8f9ff; }
+.study-block.routine { background:#f5f5f5; border-left-color:#bdbdbd; }
+.study-block.routine .sb-title { color:var(--text-light); }
+.sb-category { font-size:0.58em; padding:1px 6px; border-radius:6px; font-weight:700; display:inline-block; margin-left:4px; vertical-align:middle; }
+.sb-cat-study { background:#e8eaf6; color:var(--primary); }
+.sb-cat-routine { background:#f5f5f5; color:#999; }
+.sb-cat-custom { background:#e8f5e9; color:var(--done); }
+.study-section-divider {
+  font-size:0.72em; font-weight:700; color:var(--text-light); text-transform:uppercase;
+  letter-spacing:0.5px; padding:10px 0 4px; margin-top:4px;
+}
 .study-block .sb-check {
   width:24px; height:24px; border-radius:50%; border:2px solid #ccc;
   background:none; cursor:pointer; flex-shrink:0; display:flex;
@@ -700,9 +711,14 @@ body {
 <div class="page" id="page-study">
   <div class="study-date-chips" id="studyDateChips"></div>
   <div class="study-progress-bar" id="studyProgressBar"></div>
-  <div class="section-title" style="margin-top:0">Study Schedule</div>
-  <button class="add-study-btn" onclick="showAddStudyBlock()">+ Add Study Block</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="section-title" style="margin:0">Today's Schedule</div>
+    <label style="font-size:0.68em;color:var(--text-light);display:flex;align-items:center;gap:4px;cursor:pointer">
+      <input type="checkbox" id="routineToggle" onchange="toggleRoutineVisibility()" checked> Show routine
+    </label>
+  </div>
   <div id="studyBlockList"></div>
+  <button class="add-study-btn" onclick="showAddStudyBlock()">+ Add Extra Study Block</button>
   <div class="hw-section-title">
     Homework
     <button class="hw-add-btn" onclick="showAddHomework()">+ Add</button>
@@ -899,6 +915,76 @@ const DEFAULT_FINALS = [
   {id:'fe-en3', s:'english', paper:'Paper 3: Writing', total:100, date:'2026-11-20', time:'14:00', duration:'2.5h'},
 ];
 
+// ===== WEEKLY SCHEDULE TEMPLATE (Marita's routine) =====
+// day: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+const WEEKLY_TEMPLATE = [
+  // Monday
+  {day:1, time:'06:15', end:'06:30', title:'Wake Up & Breakfast', cat:'routine'},
+  {day:1, time:'06:30', end:'07:00', title:'Prep 4 School', cat:'routine'},
+  {day:1, time:'07:00', end:'13:30', title:'School & Driving', cat:'routine'},
+  {day:1, time:'13:30', end:'14:30', title:'Decompress', cat:'routine'},
+  {day:1, time:'14:30', end:'16:30', title:'Gym', cat:'routine'},
+  {day:1, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
+  {day:1, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
+  {day:1, time:'18:30', end:'18:55', title:'Geography', cat:'study', subject:'geografie'},
+  {day:1, time:'19:00', end:'19:25', title:'English', cat:'study', subject:'english'},
+  {day:1, time:'19:30', end:'20:00', title:'Maths Literacy', cat:'study', subject:'wiskundig'},
+  {day:1, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
+
+  // Tuesday
+  {day:2, time:'06:15', end:'06:30', title:'Wake Up & Breakfast', cat:'routine'},
+  {day:2, time:'06:30', end:'07:00', title:'Prep 4 School', cat:'routine'},
+  {day:2, time:'07:00', end:'13:30', title:'School & Driving', cat:'routine'},
+  {day:2, time:'13:30', end:'14:30', title:'Decompress', cat:'routine'},
+  {day:2, time:'14:30', end:'16:30', title:'Gym', cat:'routine'},
+  {day:2, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
+  {day:2, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
+  {day:2, time:'18:30', end:'18:55', title:'Agric Management', cat:'study', subject:'landbou'},
+  {day:2, time:'19:00', end:'19:25', title:'Afrikaans', cat:'study', subject:'afrikaans'},
+  {day:2, time:'19:30', end:'20:00', title:'Life Sciences', cat:'study', subject:'lewenswet'},
+  {day:2, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
+
+  // Wednesday
+  {day:3, time:'06:15', end:'06:30', title:'Wake Up & Breakfast', cat:'routine'},
+  {day:3, time:'06:30', end:'07:00', title:'Prep 4 School', cat:'routine'},
+  {day:3, time:'07:00', end:'13:30', title:'School & Driving', cat:'routine'},
+  {day:3, time:'13:30', end:'14:30', title:'Decompress', cat:'routine'},
+  {day:3, time:'14:30', end:'16:30', title:'Free / Rest', cat:'routine'},
+  {day:3, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
+  {day:3, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
+  {day:3, time:'18:30', end:'18:55', title:'Geography', cat:'study', subject:'geografie'},
+  {day:3, time:'19:00', end:'19:25', title:'Maths Literacy', cat:'study', subject:'wiskundig'},
+  {day:3, time:'19:30', end:'20:00', title:'Agric Management', cat:'study', subject:'landbou'},
+  {day:3, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
+
+  // Thursday
+  {day:4, time:'06:15', end:'06:30', title:'Wake Up & Breakfast', cat:'routine'},
+  {day:4, time:'06:30', end:'07:00', title:'Prep 4 School', cat:'routine'},
+  {day:4, time:'07:00', end:'13:30', title:'School & Driving', cat:'routine'},
+  {day:4, time:'13:30', end:'14:30', title:'Decompress', cat:'routine'},
+  {day:4, time:'14:30', end:'16:30', title:'Gym', cat:'routine'},
+  {day:4, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
+  {day:4, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
+  {day:4, time:'18:30', end:'18:55', title:'Life Sciences', cat:'study', subject:'lewenswet'},
+  {day:4, time:'19:00', end:'19:25', title:'English', cat:'study', subject:'english'},
+  {day:4, time:'19:30', end:'20:00', title:'Geography', cat:'study', subject:'geografie'},
+  {day:4, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
+
+  // Friday
+  {day:5, time:'16:30', end:'17:00', title:'Task', cat:'routine'},
+
+  // Saturday
+  {day:6, time:'16:30', end:'17:00', title:'Task', cat:'routine'},
+
+  // Sunday
+  {day:0, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
+  {day:0, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
+  {day:0, time:'18:30', end:'18:55', title:'Light Review', cat:'study', subject:'review'},
+  {day:0, time:'19:00', end:'19:25', title:'Light Review', cat:'study', subject:'review'},
+  {day:0, time:'19:30', end:'20:00', title:'Light Review', cat:'study', subject:'review'},
+  {day:0, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
+];
+
 // ===== ASSESSMENT DATA =====
 const DATA = [
   {id:'af1',s:'afrikaans',task:'Taak 1',type:'Mondeling',desc:'Luisterbegrip',total:15,date:'2026-06-15',q:1,w:10.0},
@@ -1017,6 +1103,8 @@ if (!state.subjects) state.subjects = Object.keys(SUBJ_FULL);
 if (!state.finals) state.finals = {};
 if (!state.finalsApproved) state.finalsApproved = {};
 if (!state.studyBlocks) state.studyBlocks = {};  // {dateStr: [{id, subject, title, time, done}]}
+if (!state.templateDone) state.templateDone = {};  // {"2026-03-18_3": true} — date + template index
+if (!state.showRoutine) state.showRoutine = true;   // toggle routine blocks visibility
 if (!state.homework) state.homework = [];         // [{id, subject, title, desc, dueDate, done}]
 if (!state.resources) state.resources = {};        // {subject: [{id, type, title, content, date}]}
 
@@ -1938,44 +2026,116 @@ function selectStudyDate(ds) {
 
 function renderStudy() {
   renderStudyDateChips();
+  document.getElementById('routineToggle').checked = state.showRoutine;
   renderStudyBlocks();
   renderHomework();
 }
 
+function toggleRoutineVisibility() {
+  state.showRoutine = document.getElementById('routineToggle').checked;
+  saveState();
+  renderStudyBlocks();
+}
+
+function getTemplateBlocksForDate(ds) {
+  const d = new Date(ds);
+  const dayOfWeek = d.getDay(); // 0=Sun ... 6=Sat
+  return WEEKLY_TEMPLATE.filter(t => t.day === dayOfWeek).map((t, idx) => ({
+    ...t,
+    templateId: `${ds}_${idx}`,
+    done: !!state.templateDone[`${ds}_${idx}`],
+    isTemplate: true
+  }));
+}
+
 function renderStudyBlocks() {
-  const blocks = (state.studyBlocks[studyDate] || []).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
-  const total = blocks.length;
-  const done = blocks.filter(b => b.done).length;
+  const showRoutine = state.showRoutine;
+  const templateBlocks = getTemplateBlocksForDate(studyDate);
+  const customBlocks = (state.studyBlocks[studyDate] || []).map(b => ({...b, isTemplate: false, cat: 'custom'}));
+
+  // Merge: template blocks at their times, custom blocks sorted by time
+  let allBlocks = [...templateBlocks, ...customBlocks];
+  allBlocks.sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+
+  // Filter out routine if toggled off
+  const visible = showRoutine ? allBlocks : allBlocks.filter(b => b.cat !== 'routine');
+
+  // Count only study + custom blocks for progress (not routine)
+  const trackable = allBlocks.filter(b => b.cat !== 'routine');
+  const totalTrack = trackable.length;
+  const doneTrack = trackable.filter(b => b.done).length;
 
   // Progress bar
-  if (total > 0) {
-    const pct = Math.round((done / total) * 100);
+  if (totalTrack > 0) {
+    const pct = Math.round((doneTrack / totalTrack) * 100);
     document.getElementById('studyProgressBar').innerHTML = `
-      <div class="study-progress-text"><span>${done}/${total} completed</span><span>${pct}%</span></div>
+      <div class="study-progress-text"><span>${doneTrack}/${totalTrack} study tasks done</span><span>${pct}%</span></div>
       <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${pct}%;background:${pct===100?'var(--done)':'var(--primary)'}"></div></div>`;
   } else {
     document.getElementById('studyProgressBar').innerHTML = '';
   }
 
-  if (!blocks.length) {
-    document.getElementById('studyBlockList').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-light);font-size:0.82em">No study blocks for this day yet</div>';
+  if (!visible.length) {
+    document.getElementById('studyBlockList').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-light);font-size:0.82em">No blocks for this day</div>';
     return;
   }
 
+  // Determine current time block
+  const now = new Date();
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const isSelectedToday = studyDate === TODAY.toISOString().split('T')[0];
+
   let html = '';
-  blocks.forEach(b => {
-    html += `<div class="study-block ${b.done ? 'is-done' : ''}" style="border-left-color:${SUBJ_COLORS[b.subject] || '#ccc'}">
-      <button class="sb-check ${b.done ? 'checked' : ''}" onclick="toggleStudyBlock('${b.id}')">
+  let lastCat = '';
+
+  visible.forEach(b => {
+    // Section dividers
+    const section = b.cat === 'routine' ? 'routine' : b.cat === 'custom' ? 'custom' : 'study';
+    if (section !== lastCat && section === 'custom' && lastCat !== '') {
+      html += '<div class="study-section-divider">Extra Study Blocks</div>';
+    }
+    lastCat = section;
+
+    const isRoutine = b.cat === 'routine';
+    const subjColor = SUBJ_COLORS[b.subject] || (isRoutine ? '#bdbdbd' : '#78909c');
+    const catBadge = isRoutine ? '<span class="sb-category sb-cat-routine">ROUTINE</span>'
+      : b.isTemplate ? '<span class="sb-category sb-cat-study">STUDY</span>'
+      : '<span class="sb-category sb-cat-custom">EXTRA</span>';
+
+    // Highlight current time block
+    let isCurrent = false;
+    if (isSelectedToday && b.time && b.end) {
+      const [sh, sm] = b.time.split(':').map(Number);
+      const [eh, em] = b.end.split(':').map(Number);
+      const startMin = sh * 60 + sm;
+      const endMin = eh * 60 + em;
+      isCurrent = nowMinutes >= startMin && nowMinutes < endMin;
+    }
+
+    const blockClass = `study-block ${b.done ? 'is-done' : ''} ${isRoutine ? 'routine' : b.isTemplate ? 'template' : ''}`;
+    const clickFn = b.isTemplate ? `toggleTemplateBlock('${b.templateId}')` : `toggleStudyBlock('${b.id}')`;
+    const deleteFn = b.isTemplate ? '' : `<button class="sb-delete" onclick="deleteStudyBlock('${b.id}')">&times;</button>`;
+
+    html += `<div class="${blockClass}" style="border-left-color:${subjColor}${isCurrent ? ';box-shadow:0 0 0 2px var(--primary);' : ''}">
+      <button class="sb-check ${b.done ? 'checked' : ''}" onclick="${clickFn}">
         ${b.done ? '&#10003;' : ''}
       </button>
       <div class="sb-info">
-        <div class="sb-title">${b.title}</div>
-        <div class="sb-time">${b.time ? b.time + ' · ' : ''}${SUBJ_NAMES[b.subject] || b.subject}</div>
+        <div class="sb-title">${b.title} ${catBadge}</div>
+        <div class="sb-time">${b.time || ''}${b.end ? ' – ' + b.end : ''}${b.subject && SUBJ_NAMES[b.subject] ? ' · ' + SUBJ_NAMES[b.subject] : ''}</div>
       </div>
-      <button class="sb-delete" onclick="deleteStudyBlock('${b.id}')">&times;</button>
+      ${deleteFn}
     </div>`;
   });
   document.getElementById('studyBlockList').innerHTML = html;
+}
+
+function toggleTemplateBlock(templateId) {
+  state.templateDone[templateId] = !state.templateDone[templateId];
+  if (state.templateDone[templateId]) confettiBurst();
+  saveState();
+  renderStudyBlocks();
+  checkAchievements();
 }
 
 function showAddStudyBlock() {
@@ -1983,7 +2143,8 @@ function showAddStudyBlock() {
   state.subjects.forEach(k => { subjOpts += `<option value="${k}">${SUBJ_FULL[k]}</option>`; });
   subjOpts += '<option value="other">Other</option>';
 
-  showModal('Add Study Block', `
+  showModal('Add Extra Study Block', `
+    <p style="font-size:0.78em;color:var(--text-light);margin-bottom:10px">Add on top of your weekly schedule.</p>
     <div class="profile-form-group">
       <label>Subject</label>
       <select id="sbSubject" class="subject-dropdown">${subjOpts}</select>
