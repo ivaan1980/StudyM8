@@ -496,6 +496,99 @@ body {
 }
 .review-btn:active { background:var(--primary); color:white; }
 
+/* Study Planner */
+.study-date-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.study-date-nav h3 { font-size:0.95em; }
+.study-date-chips { display:flex; gap:4px; overflow-x:auto; padding:4px 0; margin-bottom:10px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.study-date-chips::-webkit-scrollbar { display:none; }
+.study-date-chip {
+  flex-shrink:0; padding:6px 10px; border-radius:10px; text-align:center;
+  border:2px solid #ddd; background:white; cursor:pointer; min-width:44px;
+  transition:all 0.2s; font-size:0.72em;
+}
+.study-date-chip.active { background:var(--primary); color:white; border-color:var(--primary); }
+.study-date-chip.today { border-color:var(--primary); }
+.study-date-chip .sdc-day { font-weight:800; font-size:1.1em; line-height:1; }
+.study-date-chip .sdc-weekday { font-size:0.85em; opacity:0.7; }
+.add-study-btn {
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  width:100%; padding:10px; background:white; border:2px dashed #ccc;
+  border-radius:12px; color:var(--text-light); font-weight:600; font-size:0.82em;
+  cursor:pointer; margin-bottom:10px; transition:all 0.2s;
+}
+.add-study-btn:active { border-color:var(--primary); color:var(--primary); }
+.study-block {
+  background:white; border-radius:12px; padding:12px 14px;
+  margin-bottom:8px; display:flex; gap:10px; align-items:center;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06); border-left:4px solid #ccc;
+  transition:all 0.2s;
+}
+.study-block.is-done { opacity:0.5; }
+.study-block .sb-check {
+  width:24px; height:24px; border-radius:50%; border:2px solid #ccc;
+  background:none; cursor:pointer; flex-shrink:0; display:flex;
+  align-items:center; justify-content:center; font-size:12px; transition:all 0.2s;
+}
+.study-block .sb-check.checked { background:var(--done); border-color:var(--done); color:white; }
+.study-block .sb-info { flex:1; min-width:0; }
+.study-block .sb-title { font-size:0.82em; font-weight:600; }
+.study-block .sb-time { font-size:0.68em; color:var(--text-light); }
+.study-block .sb-delete { background:none; border:none; color:#ccc; font-size:1.1em; cursor:pointer; padding:4px; }
+.study-block .sb-delete:active { color:var(--urgent); }
+.study-progress-bar { margin-bottom:14px; }
+.study-progress-text { display:flex; justify-content:space-between; font-size:0.75em; color:var(--text-light); margin-bottom:4px; }
+
+/* Homework */
+.hw-section-title { font-size:0.88em; font-weight:700; color:var(--primary); margin:16px 0 8px; display:flex; justify-content:space-between; align-items:center; }
+.hw-add-btn { font-size:0.75em; padding:4px 12px; border-radius:8px; border:1px solid var(--primary); background:none; color:var(--primary); font-weight:600; cursor:pointer; }
+.hw-item {
+  background:white; border-radius:12px; padding:12px 14px;
+  margin-bottom:6px; display:flex; gap:10px; align-items:center;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06); border-left:4px solid #ccc;
+}
+.hw-item.is-done { opacity:0.5; }
+.hw-info { flex:1; min-width:0; }
+.hw-title { font-size:0.82em; font-weight:600; }
+.hw-meta { font-size:0.68em; color:var(--text-light); }
+.hw-empty { text-align:center; padding:20px; color:var(--text-light); font-size:0.82em; }
+
+/* Resources Hub */
+.res-subj-header {
+  display:flex; align-items:center; gap:10px; padding:12px 14px;
+  background:white; border-radius:12px; margin-bottom:8px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06); cursor:pointer;
+}
+.res-subj-header .rsh-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.res-subj-header .rsh-name { flex:1; font-size:0.88em; font-weight:700; }
+.res-subj-header .rsh-count { font-size:0.72em; color:var(--text-light); }
+.res-subj-header .rsh-arrow { font-size:0.85em; color:var(--text-light); transition:transform 0.2s; }
+.res-subj-header.expanded .rsh-arrow { transform:rotate(90deg); }
+.res-items { display:none; padding:0 4px; margin-bottom:10px; }
+.res-subj-header.expanded + .res-items { display:block; }
+.res-item {
+  background:white; border-radius:10px; padding:10px 14px;
+  margin-bottom:6px; box-shadow:0 1px 2px rgba(0,0,0,0.04);
+  display:flex; align-items:center; gap:10px;
+}
+.res-item .ri-icon { font-size:1.2em; flex-shrink:0; }
+.res-item .ri-info { flex:1; min-width:0; }
+.res-item .ri-title { font-size:0.82em; font-weight:600; }
+.res-item .ri-desc { font-size:0.68em; color:var(--text-light); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.res-item .ri-delete { background:none; border:none; color:#ccc; font-size:1em; cursor:pointer; padding:4px; }
+.res-add-btn {
+  display:flex; align-items:center; gap:4px; padding:8px 12px;
+  border:1px dashed #ccc; border-radius:10px; background:none;
+  color:var(--text-light); font-size:0.78em; cursor:pointer;
+  margin-bottom:6px; width:100%; justify-content:center;
+}
+.res-type-pills { display:flex; gap:6px; margin-bottom:12px; }
+.res-type-pill {
+  flex:1; padding:8px; border-radius:10px; border:2px solid #ddd;
+  background:white; text-align:center; cursor:pointer; font-size:0.78em;
+  font-weight:600; transition:all 0.2s;
+}
+.res-type-pill.active { border-color:var(--primary); color:var(--primary); background:#e8eaf6; }
+
 /* Final Exams */
 .finals-card {
   background:linear-gradient(135deg, #b71c1c, #e53935);
@@ -603,49 +696,52 @@ body {
   <div id="soonList"></div>
 </div>
 
-<!-- TIMELINE -->
-<div class="page" id="page-timeline">
-  <div style="margin-bottom:8px">
-    <select class="subject-dropdown" id="subjDropdown" onchange="setFilter(this.value)">
-      <option value="all">All Subjects</option>
-    </select>
+<!-- STUDY PLANNER -->
+<div class="page" id="page-study">
+  <div class="study-date-chips" id="studyDateChips"></div>
+  <div class="study-progress-bar" id="studyProgressBar"></div>
+  <div class="section-title" style="margin-top:0">Study Schedule</div>
+  <button class="add-study-btn" onclick="showAddStudyBlock()">+ Add Study Block</button>
+  <div id="studyBlockList"></div>
+  <div class="hw-section-title">
+    Homework
+    <button class="hw-add-btn" onclick="showAddHomework()">+ Add</button>
   </div>
-  <div class="filter-row" id="filterRow"></div>
-  <div id="timelineList"></div>
+  <div id="homeworkList"></div>
 </div>
 
-<!-- CALENDAR -->
+<!-- CALENDAR (includes timeline) -->
 <div class="page" id="page-calendar">
-  <div class="cal-header">
-    <button class="cal-nav-btn" onclick="changeMonth(-1)">&lt;</button>
-    <h3 id="calTitle"></h3>
-    <button class="cal-nav-btn" onclick="changeMonth(1)">&gt;</button>
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchCalTab('calendar', this)">Calendar</button>
+    <button class="tab-btn" onclick="switchCalTab('timeline', this)">Timeline</button>
   </div>
-  <div class="cal-grid" id="calGrid"></div>
-  <div class="section-title" style="margin-top:14px">This Month</div>
-  <div id="calMonthList"></div>
+  <div id="calTab-calendar">
+    <div class="cal-header">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">&lt;</button>
+      <h3 id="calTitle"></h3>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">&gt;</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="section-title" style="margin-top:14px">This Month</div>
+    <div id="calMonthList"></div>
+  </div>
+  <div id="calTab-timeline" style="display:none">
+    <div style="margin-bottom:8px">
+      <select class="subject-dropdown" id="subjDropdown" onchange="setFilter(this.value)">
+        <option value="all">All Subjects</option>
+      </select>
+    </div>
+    <div class="filter-row" id="filterRow"></div>
+    <div id="timelineList"></div>
+  </div>
 </div>
 
-<!-- SOCIAL -->
-<div class="page" id="page-social">
-  <div class="share-card">
-    <h3>Share with Friends</h3>
-    <p>Share your progress, compete, and motivate each other!</p>
-    <div class="share-btn-row">
-      <button class="share-btn share-btn-primary" onclick="shareProgress()">Share Progress</button>
-      <button class="share-btn share-btn-secondary" onclick="showImportModal()">Add Friend</button>
-    </div>
-  </div>
-
-  <div class="tab-row">
-    <button class="tab-btn active" onclick="switchSocialTab('leaderboard', this)">Leaderboard</button>
-    <button class="tab-btn" onclick="switchSocialTab('friends', this)">Friends</button>
-    <button class="tab-btn" onclick="switchSocialTab('achievements', this)">Achievements</button>
-  </div>
-
-  <div id="socialTab-leaderboard"></div>
-  <div id="socialTab-friends" style="display:none"></div>
-  <div id="socialTab-achievements" style="display:none"></div>
+<!-- RESOURCES -->
+<div class="page" id="page-resources">
+  <div class="section-title" style="margin-top:0">Subject Resources</div>
+  <p style="font-size:0.78em;color:var(--text-light);margin-bottom:12px">Add summaries, links, and notes per subject.</p>
+  <div id="resourcesList"></div>
 </div>
 
 <!-- PROFILE -->
@@ -662,6 +758,13 @@ body {
     <div class="profile-school" id="profileDisplaySchool">Impaq - Grade 12</div>
   </div>
 
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchProfileTab('details', this)">Profile</button>
+    <button class="tab-btn" onclick="switchProfileTab('squad', this)">Squad</button>
+    <button class="tab-btn" onclick="switchProfileTab('achievements', this)">Achievements</button>
+  </div>
+
+  <div id="profileTab-details">
   <div class="card">
     <div class="section-title" style="margin-top:0">Edit Profile</div>
     <div class="profile-form-group">
@@ -714,6 +817,24 @@ body {
     <button class="modal-btn" onclick="exportAllData()" style="background:var(--done)">Export Data</button>
     <button class="modal-btn modal-btn-outline" onclick="showResetConfirm()" style="margin-top:6px; color:var(--urgent); border-color:var(--urgent)">Reset All</button>
   </div>
+  </div><!-- end profileTab-details -->
+
+  <div id="profileTab-squad" style="display:none">
+    <div class="share-card">
+      <h3>Share with Friends</h3>
+      <p>Share your progress, compete, and motivate each other!</p>
+      <div class="share-btn-row">
+        <button class="share-btn share-btn-primary" onclick="shareProgress()">Share Progress</button>
+        <button class="share-btn share-btn-secondary" onclick="showImportModal()">Add Friend</button>
+      </div>
+    </div>
+    <div id="socialTab-leaderboard"></div>
+    <div id="socialTab-friends" style="margin-top:12px"></div>
+  </div>
+
+  <div id="profileTab-achievements" style="display:none">
+    <div id="socialTab-achievements"></div>
+  </div>
 </div>
 
 <nav class="bottom-nav">
@@ -721,18 +842,17 @@ body {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     Home
   </button>
-  <button class="nav-item" onclick="showPage('timeline')" data-page="timeline">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    Timeline
+  <button class="nav-item" onclick="showPage('study')" data-page="study">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    Study
   </button>
   <button class="nav-item" onclick="showPage('calendar')" data-page="calendar">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     Calendar
   </button>
-  <button class="nav-item" onclick="showPage('social')" data-page="social">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    <span id="socialBadge"></span>
-    Squad
+  <button class="nav-item" onclick="showPage('resources')" data-page="resources">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    Resources
   </button>
   <button class="nav-item" onclick="showPage('profile')" data-page="profile">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -894,8 +1014,11 @@ if (!state.xp) state.xp = 0;
 if (!state.streak) state.streak = 0;
 if (!state.lastVisit) state.lastVisit = null;
 if (!state.subjects) state.subjects = Object.keys(SUBJ_FULL);
-if (!state.finals) state.finals = {};         // {examId: {date, approved}}
-if (!state.finalsApproved) state.finalsApproved = {}; // {examId: true}
+if (!state.finals) state.finals = {};
+if (!state.finalsApproved) state.finalsApproved = {};
+if (!state.studyBlocks) state.studyBlocks = {};  // {dateStr: [{id, subject, title, time, done}]}
+if (!state.homework) state.homework = [];         // [{id, subject, title, desc, dueDate, done}]
+if (!state.resources) state.resources = {};        // {subject: [{id, type, title, content, date}]}
 
 // Init presets
 DATA.forEach(a => {
@@ -1784,6 +1907,386 @@ function renderWeaknessDetection() {
   }
 }
 
+// ===== STUDY PLANNER =====
+let studyDate = TODAY.toISOString().split('T')[0];
+
+function getStudyDateStr(offset) {
+  const d = new Date(TODAY);
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().split('T')[0];
+}
+
+function renderStudyDateChips() {
+  let html = '';
+  for (let i = -1; i <= 7; i++) {
+    const ds = getStudyDateStr(i);
+    const d = new Date(ds);
+    const isToday = i === 0;
+    const isActive = ds === studyDate;
+    html += `<div class="study-date-chip ${isActive ? 'active' : ''} ${isToday ? 'today' : ''}" onclick="selectStudyDate('${ds}')">
+      <div class="sdc-weekday">${DAYS_SHORT[d.getDay()]}</div>
+      <div class="sdc-day">${d.getDate()}</div>
+    </div>`;
+  }
+  document.getElementById('studyDateChips').innerHTML = html;
+}
+
+function selectStudyDate(ds) {
+  studyDate = ds;
+  renderStudy();
+}
+
+function renderStudy() {
+  renderStudyDateChips();
+  renderStudyBlocks();
+  renderHomework();
+}
+
+function renderStudyBlocks() {
+  const blocks = (state.studyBlocks[studyDate] || []).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+  const total = blocks.length;
+  const done = blocks.filter(b => b.done).length;
+
+  // Progress bar
+  if (total > 0) {
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('studyProgressBar').innerHTML = `
+      <div class="study-progress-text"><span>${done}/${total} completed</span><span>${pct}%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${pct}%;background:${pct===100?'var(--done)':'var(--primary)'}"></div></div>`;
+  } else {
+    document.getElementById('studyProgressBar').innerHTML = '';
+  }
+
+  if (!blocks.length) {
+    document.getElementById('studyBlockList').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-light);font-size:0.82em">No study blocks for this day yet</div>';
+    return;
+  }
+
+  let html = '';
+  blocks.forEach(b => {
+    html += `<div class="study-block ${b.done ? 'is-done' : ''}" style="border-left-color:${SUBJ_COLORS[b.subject] || '#ccc'}">
+      <button class="sb-check ${b.done ? 'checked' : ''}" onclick="toggleStudyBlock('${b.id}')">
+        ${b.done ? '&#10003;' : ''}
+      </button>
+      <div class="sb-info">
+        <div class="sb-title">${b.title}</div>
+        <div class="sb-time">${b.time ? b.time + ' · ' : ''}${SUBJ_NAMES[b.subject] || b.subject}</div>
+      </div>
+      <button class="sb-delete" onclick="deleteStudyBlock('${b.id}')">&times;</button>
+    </div>`;
+  });
+  document.getElementById('studyBlockList').innerHTML = html;
+}
+
+function showAddStudyBlock() {
+  let subjOpts = '<option value="">Select subject</option>';
+  state.subjects.forEach(k => { subjOpts += `<option value="${k}">${SUBJ_FULL[k]}</option>`; });
+  subjOpts += '<option value="other">Other</option>';
+
+  showModal('Add Study Block', `
+    <div class="profile-form-group">
+      <label>Subject</label>
+      <select id="sbSubject" class="subject-dropdown">${subjOpts}</select>
+    </div>
+    <div class="profile-form-group">
+      <label>What will you study?</label>
+      <input id="sbTitle" class="note-input" placeholder="e.g. Chapter 5 revision, Past paper P1...">
+    </div>
+    <div class="profile-form-group">
+      <label>Time (optional)</label>
+      <input id="sbTime" type="time" class="note-input">
+    </div>
+    <button class="modal-btn" onclick="addStudyBlock()">Add</button>
+  `);
+}
+
+function addStudyBlock() {
+  const subject = document.getElementById('sbSubject').value;
+  const title = document.getElementById('sbTitle').value.trim();
+  if (!title) { toast('Enter what you will study'); return; }
+
+  if (!state.studyBlocks[studyDate]) state.studyBlocks[studyDate] = [];
+  state.studyBlocks[studyDate].push({
+    id: 'sb_' + Date.now(),
+    subject: subject || 'other',
+    title,
+    time: document.getElementById('sbTime').value || '',
+    done: false
+  });
+  saveState();
+  closeModal();
+  renderStudy();
+  toast('Study block added!');
+}
+
+function toggleStudyBlock(id) {
+  const blocks = state.studyBlocks[studyDate] || [];
+  const block = blocks.find(b => b.id === id);
+  if (block) {
+    block.done = !block.done;
+    if (block.done) confettiBurst();
+    saveState();
+    renderStudy();
+    checkAchievements();
+  }
+}
+
+function deleteStudyBlock(id) {
+  if (!state.studyBlocks[studyDate]) return;
+  state.studyBlocks[studyDate] = state.studyBlocks[studyDate].filter(b => b.id !== id);
+  saveState();
+  renderStudy();
+}
+
+// ===== HOMEWORK =====
+function renderHomework() {
+  const hw = state.homework.filter(h => !h.done).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  const hwDone = state.homework.filter(h => h.done);
+
+  if (!hw.length && !hwDone.length) {
+    document.getElementById('homeworkList').innerHTML = '<div class="hw-empty">No homework yet. Tap + Add to get started.</div>';
+    return;
+  }
+
+  let html = '';
+  hw.forEach(h => {
+    const days = getDaysUntil(h.dueDate);
+    const color = days < 0 ? 'var(--urgent)' : days <= 3 ? 'var(--process)' : 'var(--text-light)';
+    html += `<div class="hw-item" style="border-left-color:${SUBJ_COLORS[h.subject] || '#ccc'}">
+      <button class="sb-check" onclick="toggleHomework('${h.id}')"></button>
+      <div class="hw-info">
+        <div class="hw-title">${h.title}</div>
+        <div class="hw-meta">
+          <span style="color:${SUBJ_COLORS[h.subject] || '#999'}">${SUBJ_NAMES[h.subject] || h.subject}</span>
+          ${h.desc ? ' · ' + h.desc : ''}
+          · <span style="color:${color}">${days < 0 ? 'Overdue!' : days === 0 ? 'Due today' : 'Due in ' + days + 'd'}</span>
+        </div>
+      </div>
+      <button class="sb-delete" onclick="deleteHomework('${h.id}')">&times;</button>
+    </div>`;
+  });
+
+  if (hwDone.length > 0) {
+    html += `<div style="font-size:0.75em;color:var(--text-light);margin:10px 0 6px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+      Completed (${hwDone.length}) ▾
+    </div><div style="display:none">`;
+    hwDone.forEach(h => {
+      html += `<div class="hw-item is-done" style="border-left-color:${SUBJ_COLORS[h.subject] || '#ccc'}">
+        <button class="sb-check checked" onclick="toggleHomework('${h.id}')">&#10003;</button>
+        <div class="hw-info">
+          <div class="hw-title">${h.title}</div>
+          <div class="hw-meta">${SUBJ_NAMES[h.subject] || h.subject}</div>
+        </div>
+        <button class="sb-delete" onclick="deleteHomework('${h.id}')">&times;</button>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('homeworkList').innerHTML = html;
+}
+
+function showAddHomework() {
+  let subjOpts = '<option value="">Select subject</option>';
+  state.subjects.forEach(k => { subjOpts += `<option value="${k}">${SUBJ_FULL[k]}</option>`; });
+  subjOpts += '<option value="other">Other</option>';
+
+  showModal('Add Homework', `
+    <div class="profile-form-group">
+      <label>Subject</label>
+      <select id="hwSubject" class="subject-dropdown">${subjOpts}</select>
+    </div>
+    <div class="profile-form-group">
+      <label>Title</label>
+      <input id="hwTitle" class="note-input" placeholder="e.g. Page 45 exercises, Essay draft...">
+    </div>
+    <div class="profile-form-group">
+      <label>Description (optional)</label>
+      <input id="hwDesc" class="note-input" placeholder="Extra details...">
+    </div>
+    <div class="profile-form-group">
+      <label>Due Date</label>
+      <input id="hwDue" type="date" class="note-input" value="${studyDate}">
+    </div>
+    <button class="modal-btn" onclick="addHomework()">Add</button>
+  `);
+}
+
+function addHomework() {
+  const subject = document.getElementById('hwSubject').value;
+  const title = document.getElementById('hwTitle').value.trim();
+  const dueDate = document.getElementById('hwDue').value;
+  if (!title) { toast('Enter a title'); return; }
+
+  state.homework.push({
+    id: 'hw_' + Date.now(),
+    subject: subject || 'other',
+    title,
+    desc: document.getElementById('hwDesc').value.trim(),
+    dueDate: dueDate || studyDate,
+    done: false
+  });
+  saveState();
+  closeModal();
+  renderStudy();
+  toast('Homework added!');
+}
+
+function toggleHomework(id) {
+  const hw = state.homework.find(h => h.id === id);
+  if (hw) {
+    hw.done = !hw.done;
+    if (hw.done) confettiBurst();
+    saveState();
+    renderStudy();
+    checkAchievements();
+  }
+}
+
+function deleteHomework(id) {
+  state.homework = state.homework.filter(h => h.id !== id);
+  saveState();
+  renderStudy();
+}
+
+// ===== RESOURCES HUB =====
+function renderResources() {
+  let html = '';
+  state.subjects.forEach(k => {
+    const items = state.resources[k] || [];
+    const expanded = items.length > 0 ? '' : '';
+    html += `<div class="res-subj-header ${expanded}" onclick="toggleResSubject(this)" style="border-left:4px solid ${SUBJ_COLORS[k]}">
+      <div class="rsh-dot" style="background:${SUBJ_COLORS[k]}"></div>
+      <div class="rsh-name">${SUBJ_FULL[k]}</div>
+      <div class="rsh-count">${items.length} item${items.length !== 1 ? 's' : ''}</div>
+      <div class="rsh-arrow">›</div>
+    </div>
+    <div class="res-items">
+      ${items.map(r => `<div class="res-item">
+        <div class="ri-icon">${r.type === 'note' ? '📝' : r.type === 'link' ? '🔗' : r.type === 'audio' ? '🎧' : '📄'}</div>
+        <div class="ri-info">
+          <div class="ri-title">${r.type === 'link' ? '<a href="' + escHtml(r.content) + '" target="_blank" style="color:var(--primary)">' + escHtml(r.title) + '</a>' : escHtml(r.title)}</div>
+          <div class="ri-desc">${r.type === 'note' ? escHtml(r.content).substring(0, 80) : r.type === 'link' ? escHtml(r.content) : r.date || ''}</div>
+        </div>
+        <button class="ri-delete" onclick="deleteResource('${k}','${r.id}')">&times;</button>
+      </div>`).join('')}
+      <button class="res-add-btn" onclick="showAddResource('${k}')">+ Add Resource</button>
+    </div>`;
+  });
+
+  if (!state.subjects.length) {
+    html = '<div style="text-align:center;padding:30px;color:var(--text-light)">Select subjects in your Profile first.</div>';
+  }
+
+  document.getElementById('resourcesList').innerHTML = html;
+}
+
+function escHtml(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function toggleResSubject(el) {
+  el.classList.toggle('expanded');
+}
+
+function showAddResource(subject) {
+  showModal('Add Resource — ' + SUBJ_NAMES[subject], `
+    <div class="res-type-pills" id="resTypePills">
+      <div class="res-type-pill active" onclick="selectResType('note', this)">📝 Note</div>
+      <div class="res-type-pill" onclick="selectResType('link', this)">🔗 Link</div>
+      <div class="res-type-pill" onclick="selectResType('audio', this)">🎧 Audio</div>
+    </div>
+    <input type="hidden" id="resType" value="note">
+    <input type="hidden" id="resSubject" value="${subject}">
+    <div class="profile-form-group">
+      <label>Title</label>
+      <input id="resTitle" class="note-input" placeholder="e.g. Chapter 3 Summary, Exam tips video...">
+    </div>
+    <div class="profile-form-group" id="resContentGroup">
+      <label id="resContentLabel">Content</label>
+      <textarea id="resContent" class="note-input" style="min-height:80px;resize:vertical" placeholder="Type your summary or notes here..."></textarea>
+    </div>
+    <button class="modal-btn" onclick="addResource()">Add</button>
+  `);
+}
+
+function selectResType(type, el) {
+  document.getElementById('resType').value = type;
+  document.querySelectorAll('.res-type-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+
+  const label = document.getElementById('resContentLabel');
+  const content = document.getElementById('resContent');
+  if (type === 'note') {
+    label.textContent = 'Content';
+    content.placeholder = 'Type your summary or notes here...';
+    content.style.minHeight = '80px';
+  } else if (type === 'link') {
+    label.textContent = 'URL';
+    content.placeholder = 'https://...';
+    content.style.minHeight = '40px';
+  } else {
+    label.textContent = 'Audio URL or description';
+    content.placeholder = 'Paste link to audio summary or describe...';
+    content.style.minHeight = '40px';
+  }
+}
+
+function addResource() {
+  const subject = document.getElementById('resSubject').value;
+  const type = document.getElementById('resType').value;
+  const title = document.getElementById('resTitle').value.trim();
+  const content = document.getElementById('resContent').value.trim();
+  if (!title) { toast('Enter a title'); return; }
+
+  if (!state.resources[subject]) state.resources[subject] = [];
+  state.resources[subject].push({
+    id: 'res_' + Date.now(),
+    type,
+    title,
+    content,
+    date: TODAY.toISOString().split('T')[0]
+  });
+  saveState();
+  closeModal();
+  renderResources();
+  toast('Resource added!');
+}
+
+function deleteResource(subject, id) {
+  if (!state.resources[subject]) return;
+  state.resources[subject] = state.resources[subject].filter(r => r.id !== id);
+  saveState();
+  renderResources();
+}
+
+// ===== CALENDAR / TIMELINE TABS =====
+function switchCalTab(tab, btn) {
+  document.querySelectorAll('[id^="calTab-"]').forEach(t => t.style.display = 'none');
+  document.getElementById('calTab-' + tab).style.display = 'block';
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ===== PROFILE TABS =====
+function switchProfileTab(tab, btn) {
+  document.querySelectorAll('[id^="profileTab-"]').forEach(t => t.style.display = 'none');
+  document.getElementById('profileTab-' + tab).style.display = 'block';
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'squad') renderSquad();
+  if (tab === 'achievements') renderProfileAchievements();
+}
+
+function renderSquad() {
+  renderLeaderboard();
+  renderFriends();
+}
+
+function renderProfileAchievements() {
+  renderAchievements();
+}
+
 // ===== WEEKLY REVIEW =====
 function showWeeklyReview() {
   const data = activeData().sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -2075,7 +2578,8 @@ function showPage(page) {
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
   if (page==='profile') renderProfile();
-  if (page==='social') renderSocial();
+  if (page==='study') renderStudy();
+  if (page==='resources') renderResources();
   renderAll();
 }
 
@@ -2091,6 +2595,8 @@ function renderAll() {
 // Init
 renderAll();
 renderProfile();
+renderStudy();
+renderResources();
 renderSocial();
 checkAchievements();
 
