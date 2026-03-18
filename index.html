@@ -496,6 +496,59 @@ body {
 }
 .review-btn:active { background:var(--primary); color:white; }
 
+/* Final Exams */
+.finals-card {
+  background:linear-gradient(135deg, #b71c1c, #e53935);
+  color:white; border-radius:14px; padding:16px; margin-bottom:12px;
+}
+.finals-card h3 { font-size:0.95em; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+.finals-card .finals-sub { font-size:0.72em; opacity:0.75; margin-bottom:12px; }
+.finals-edit-btn {
+  background:rgba(255,255,255,0.2); border:none; color:white;
+  padding:4px 12px; border-radius:8px; font-size:0.72em; font-weight:700;
+  cursor:pointer; float:right; margin-top:-2px;
+}
+.finals-edit-btn:active { background:rgba(255,255,255,0.35); }
+.final-exam-item {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; margin-bottom:4px;
+  background:rgba(255,255,255,0.12); border-radius:8px;
+}
+.final-exam-item.approved { background:rgba(255,255,255,0.22); }
+.fe-subj-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.fe-info { flex:1; }
+.fe-name { font-size:0.8em; font-weight:600; }
+.fe-paper { font-size:0.66em; opacity:0.8; }
+.fe-date { text-align:right; min-width:55px; }
+.fe-date .fe-day { font-size:0.82em; font-weight:700; }
+.fe-date .fe-countdown { font-size:0.62em; opacity:0.75; }
+.fe-approved-badge {
+  display:inline-block; width:14px; height:14px; border-radius:50%;
+  background:rgba(255,255,255,0.3); text-align:center; line-height:14px;
+  font-size:0.6em; margin-left:4px; vertical-align:middle;
+}
+.fe-approved-badge.yes { background:#4caf50; }
+
+/* Final exam edit modal */
+.fe-edit-row {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 0; border-bottom:1px solid #eee;
+}
+.fe-edit-row:last-child { border-bottom:none; }
+.fe-edit-label { flex:1; font-size:0.82em; font-weight:600; }
+.fe-edit-label small { display:block; font-weight:400; color:var(--text-light); font-size:0.85em; }
+.fe-edit-date {
+  width:130px; padding:6px 8px; border:1px solid #ddd;
+  border-radius:8px; font-size:0.85em; font-family:inherit;
+}
+.fe-approve-btn {
+  width:32px; height:32px; border-radius:50%; border:2px solid #ddd;
+  background:none; cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; flex-shrink:0;
+}
+.fe-approve-btn.approved { background:var(--done); border-color:var(--done); color:white; }
+
 @media (min-width:600px) { .page { max-width:600px; margin:0 auto; } }
 </style>
 </head>
@@ -537,6 +590,7 @@ body {
 <div class="page active" id="page-home">
   <div class="xp-bar-wrap" id="xpWidget"></div>
   <div class="countdown-widget" id="countdownWidget"></div>
+  <div id="finalsCard"></div>
   <div class="stats-row" id="statsRow"></div>
   <div id="studyTodayCard"></div>
   <button class="review-btn" onclick="showWeeklyReview()">
@@ -707,6 +761,24 @@ const SUBJ_FULL = {
   lewenswet:'Life Sciences', wiskundig:'Mathematical Literacy'
 };
 
+// ===== NSC FINAL EXAM DATES (public school defaults — editable) =====
+const DEFAULT_FINALS = [
+  {id:'fe-lo', s:'lo', paper:'Common Paper', total:100, date:'2026-10-22', time:'09:00', duration:'2h'},
+  {id:'fe-wg1', s:'wiskundig', paper:'Paper 1', total:150, date:'2026-10-28', time:'09:00', duration:'3h'},
+  {id:'fe-wg2', s:'wiskundig', paper:'Paper 2', total:150, date:'2026-10-30', time:'09:00', duration:'3h'},
+  {id:'fe-lb', s:'landbou', paper:'Paper', total:200, date:'2026-11-02', time:'09:00', duration:'3h'},
+  {id:'fe-en1', s:'english', paper:'Paper 1: Language', total:80, date:'2026-11-04', time:'09:00', duration:'2h'},
+  {id:'fe-af1', s:'afrikaans', paper:'Paper 1: Taal', total:80, date:'2026-11-06', time:'09:00', duration:'2h'},
+  {id:'fe-lw1', s:'lewenswet', paper:'Paper 1', total:150, date:'2026-11-09', time:'09:00', duration:'2.5h'},
+  {id:'fe-en2', s:'english', paper:'Paper 2: Literature', total:70, date:'2026-11-11', time:'09:00', duration:'2h'},
+  {id:'fe-ge1', s:'geografie', paper:'Paper 1', total:150, date:'2026-11-12', time:'09:00', duration:'3h'},
+  {id:'fe-af2', s:'afrikaans', paper:'Paper 2: Letterkunde', total:80, date:'2026-11-13', time:'14:00', duration:'2h'},
+  {id:'fe-lw2', s:'lewenswet', paper:'Paper 2', total:150, date:'2026-11-16', time:'09:00', duration:'2.5h'},
+  {id:'fe-af3', s:'afrikaans', paper:'Paper 3: Skryf', total:100, date:'2026-11-17', time:'14:00', duration:'2.5h'},
+  {id:'fe-ge2', s:'geografie', paper:'Paper 2', total:150, date:'2026-11-18', time:'09:00', duration:'3h'},
+  {id:'fe-en3', s:'english', paper:'Paper 3: Writing', total:100, date:'2026-11-20', time:'14:00', duration:'2.5h'},
+];
+
 // ===== ASSESSMENT DATA =====
 const DATA = [
   {id:'af1',s:'afrikaans',task:'Taak 1',type:'Mondeling',desc:'Luisterbegrip',total:15,date:'2026-06-15',q:1,w:10.0},
@@ -822,6 +894,8 @@ if (!state.xp) state.xp = 0;
 if (!state.streak) state.streak = 0;
 if (!state.lastVisit) state.lastVisit = null;
 if (!state.subjects) state.subjects = Object.keys(SUBJ_FULL);
+if (!state.finals) state.finals = {};         // {examId: {date, approved}}
+if (!state.finalsApproved) state.finalsApproved = {}; // {examId: true}
 
 // Init presets
 DATA.forEach(a => {
@@ -1811,6 +1885,134 @@ function showWeeklyReview() {
   document.getElementById('modalOverlay').classList.add('show');
 }
 
+// ===== FINAL EXAMS =====
+function getFinalDate(fe) {
+  // Return custom date if set, otherwise default
+  return (state.finals[fe.id] && state.finals[fe.id].date) || fe.date;
+}
+
+function isFinalApproved(fe) {
+  return !!state.finalsApproved[fe.id];
+}
+
+function getActiveFinals() {
+  return DEFAULT_FINALS.filter(fe => state.subjects.includes(fe.s));
+}
+
+function renderFinals() {
+  const finals = getActiveFinals().sort((a, b) => new Date(getFinalDate(a)) - new Date(getFinalDate(b)));
+  if (!finals.length) { document.getElementById('finalsCard').innerHTML = ''; return; }
+
+  // Only show if there's a final within 120 days or always show from August onwards
+  const nextFinal = finals.find(fe => getDaysUntil(getFinalDate(fe)) > 0);
+  if (!nextFinal) { document.getElementById('finalsCard').innerHTML = ''; return; }
+  const daysToFirst = getDaysUntil(getFinalDate(finals[0]));
+  if (daysToFirst > 120 && TODAY.getMonth() < 7) { document.getElementById('finalsCard').innerHTML = ''; return; }
+
+  const approvedCount = finals.filter(fe => isFinalApproved(fe)).length;
+
+  let html = `<div class="finals-card">
+    <button class="finals-edit-btn" onclick="showFinalsEditor()">Edit Dates</button>
+    <h3>Final Exams (NSC)</h3>
+    <div class="finals-sub">Public school dates shown — edit for your school. ${approvedCount}/${finals.length} confirmed.</div>`;
+
+  finals.forEach(fe => {
+    const date = getFinalDate(fe);
+    const d = new Date(date);
+    const days = getDaysUntil(date);
+    const approved = isFinalApproved(fe);
+    const past = days < 0;
+
+    html += `<div class="final-exam-item ${approved ? 'approved' : ''}" ${past ? 'style="opacity:0.5"' : ''}>
+      <div class="fe-subj-dot" style="background:${SUBJ_COLORS[fe.s]}"></div>
+      <div class="fe-info">
+        <div class="fe-name">${SUBJ_NAMES[fe.s]}: ${fe.paper}
+          ${approved ? '<span class="fe-approved-badge yes">&#10003;</span>' : '<span class="fe-approved-badge">?</span>'}
+        </div>
+        <div class="fe-paper">${fe.duration} | ${fe.time} | /${fe.total}</div>
+      </div>
+      <div class="fe-date">
+        <div class="fe-day">${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}</div>
+        <div class="fe-countdown">${past ? 'Done' : days === 0 ? 'TODAY' : days + ' days'}</div>
+      </div>
+    </div>`;
+  });
+
+  html += '</div>';
+  document.getElementById('finalsCard').innerHTML = html;
+}
+
+function showFinalsEditor() {
+  const finals = getActiveFinals().sort((a, b) => new Date(getFinalDate(a)) - new Date(getFinalDate(b)));
+
+  let html = `<button class="modal-close" onclick="closeModal()">&times;</button>
+    <h3>Edit Final Exam Dates</h3>
+    <p style="font-size:0.78em;color:var(--text-light);margin-bottom:12px">
+      Default dates are for public schools (NSC). Change dates to match your school, then tap the tick to confirm.
+    </p>`;
+
+  finals.forEach(fe => {
+    const date = getFinalDate(fe);
+    const approved = isFinalApproved(fe);
+    html += `<div class="fe-edit-row">
+      <div class="fe-edit-label">
+        <span style="color:${SUBJ_COLORS[fe.s]}">${SUBJ_NAMES[fe.s]}</span>
+        <small>${fe.paper} (${fe.duration})</small>
+      </div>
+      <input type="date" class="fe-edit-date" value="${date}" onchange="saveFinalDate('${fe.id}', this.value)">
+      <button class="fe-approve-btn ${approved ? 'approved' : ''}" onclick="toggleFinalApproval('${fe.id}', this)" title="Confirm this date">
+        ${approved ? '&#10003;' : ''}
+      </button>
+    </div>`;
+  });
+
+  html += `<button class="modal-btn" style="margin-top:14px" onclick="approveAllFinals()">Approve All Dates</button>
+    <button class="modal-btn modal-btn-outline" style="margin-top:6px" onclick="resetFinalsToDefault()">Reset to Public School Defaults</button>`;
+
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function saveFinalDate(id, date) {
+  if (!state.finals[id]) state.finals[id] = {};
+  state.finals[id].date = date;
+  // Un-approve when date changes
+  delete state.finalsApproved[id];
+  saveState();
+  renderFinals();
+}
+
+function toggleFinalApproval(id, btn) {
+  if (state.finalsApproved[id]) {
+    delete state.finalsApproved[id];
+    btn.classList.remove('approved');
+    btn.innerHTML = '';
+  } else {
+    state.finalsApproved[id] = true;
+    btn.classList.add('approved');
+    btn.innerHTML = '&#10003;';
+  }
+  saveState();
+  renderFinals();
+}
+
+function approveAllFinals() {
+  getActiveFinals().forEach(fe => { state.finalsApproved[fe.id] = true; });
+  saveState();
+  closeModal();
+  renderFinals();
+  toast('All final exam dates approved!');
+}
+
+function resetFinalsToDefault() {
+  state.finals = {};
+  state.finalsApproved = {};
+  saveState();
+  closeModal();
+  renderFinals();
+  toast('Reset to public school dates');
+}
+
 // ===== PREP COUNTDOWN WITH STUDY SCHEDULE =====
 function buildPrepHint(a, days, d) {
   // Exams get detailed prep schedule
@@ -1879,6 +2081,7 @@ function showPage(page) {
 
 function renderAll() {
   renderHome();
+  renderFinals();
   renderStudyToday();
   renderFilters();
   renderTimeline();
