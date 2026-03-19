@@ -715,6 +715,10 @@ body {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     Weekly Review
   </button>
+  <div id="overdueSection" style="display:none">
+    <div class="section-title" style="color:var(--urgent)">Overdue</div>
+    <div id="overdueList"></div>
+  </div>
   <div class="section-title">Urgent & In Progress</div>
   <div id="urgentList"></div>
   <div class="section-title" style="margin-top:16px">Coming Up Next</div>
@@ -796,7 +800,10 @@ body {
 
   <div id="profileTab-details">
   <div class="card">
-    <div class="section-title" style="margin-top:0">Edit Profile</div>
+    <div class="section-title" style="margin-top:0;display:flex;justify-content:space-between;align-items:center">
+      Edit Profile
+      <span id="profileSaveIndicator" style="font-size:0.72em;color:var(--done);font-weight:600;opacity:0;transition:opacity 0.3s">✓ Saved</span>
+    </div>
     <div class="profile-form-group">
       <label>Name</label>
       <input id="profName" placeholder="Your name" oninput="saveProfile()">
@@ -1092,13 +1099,13 @@ const ACHIEVEMENTS = [
 ];
 
 const LEVELS = [
-  {min:0, title:'Beginner 📚'},
-  {min:100, title:'Student 📖'},
-  {min:250, title:'Scholar 🧠'},
-  {min:500, title:'Brainiac 🎓'},
-  {min:800, title:'Academic Star ⭐'},
-  {min:1200, title:'Expert 🔬'},
-  {min:1800, title:'Master 🏅'},
+  {min:0, title:'Gr12 Rookie 📚'},
+  {min:100, title:'Study Starter 📖'},
+  {min:250, title:'Knowledge Seeker 🧠'},
+  {min:500, title:'Study Warrior 🎓'},
+  {min:800, title:'Academic Ace ⭐'},
+  {min:1200, title:'Exam Crusher 🔬'},
+  {min:1800, title:'Matric Champion 🏅'},
   {min:2500, title:'Matric Legend 👑'},
 ];
 
@@ -1300,9 +1307,9 @@ function renderHome() {
   }
 
   document.getElementById('statsRow').innerHTML = `
-    <div class="stat-card"><div class="stat-num" style="color:var(--done)">${done}</div><div class="stat-label">Done (total)</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--done)">${done}<span style="font-size:0.45em;color:var(--text-muted)">/${total}</span></div><div class="stat-label">Done</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--urgent)">${urgentCount}</div><div class="stat-label">Urgent</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--upcoming)">${total-done}</div><div class="stat-label">Remaining</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--upcoming)">${total-done}</div><div class="stat-label">To Go</div></div>
   `;
 
   // Update nav badge
@@ -1317,13 +1324,24 @@ function renderHome() {
     } else { badge.textContent = urgentCount; badge.title = urgentCount + ' urgent tasks'; }
   } else if (badge) badge.remove();
 
-  const urgentItems = data.filter(a=>{const s=getStatus(a); return s==='urgent'||s==='overdue'||s==='process'||s==='soon';});
+  // Overdue section (separate from urgent)
+  const overdueItems = data.filter(a => !state.done[a.id] && getDaysUntil(a.date) < 0);
+  const overdueSection = document.getElementById('overdueSection');
+  if (overdueItems.length > 0) {
+    overdueSection.style.display = 'block';
+    document.getElementById('overdueList').innerHTML = overdueItems.map(a => renderItem(a)).join('');
+  } else {
+    overdueSection.style.display = 'none';
+  }
+
+  const overdueIds = new Set(overdueItems.map(a => a.id));
+  const urgentItems = data.filter(a=>{const s=getStatus(a); return !overdueIds.has(a.id) && (s==='urgent'||s==='process'||s==='soon');});
   document.getElementById('urgentList').innerHTML = urgentItems.length
     ? urgentItems.map(a=>renderItem(a)).join('')
     : '<div class="card" style="text-align:center;color:var(--text-light)">No urgent tasks!</div>';
 
-  // "Coming Up" shows tasks 1-60 days out that aren't already in the urgent section
-  const urgentIds = new Set(urgentItems.map(a => a.id));
+  // "Coming Up" shows tasks 1-60 days out that aren't already shown above
+  const urgentIds = new Set([...urgentItems.map(a => a.id), ...overdueItems.map(a => a.id)]);
   const soonItems = data.filter(a => {
     if (state.done[a.id]) return false;
     if (urgentIds.has(a.id)) return false;
@@ -1638,6 +1656,7 @@ function renderProfile() {
   renderWeaknessDetection();
 }
 
+let profileSaveTimer = null;
 function saveProfile() {
   state.profile.name = document.getElementById('profName').value;
   state.profile.surname = document.getElementById('profSurname').value;
@@ -1646,6 +1665,11 @@ function saveProfile() {
   state.profile.motto = document.getElementById('profMotto').value;
   saveState();
   renderProfile();
+  // Show auto-save indicator
+  clearTimeout(profileSaveTimer);
+  const ind = document.getElementById('profileSaveIndicator');
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.opacity = '1'; }
+  profileSaveTimer = setTimeout(() => { if (ind) ind.style.opacity = '0'; }, 1500);
 }
 
 function handleAvatarUpload(e) {
@@ -1854,23 +1878,31 @@ function getSubjectMarks(subjKey) {
 
 function renderSubjectAverages() {
   let html = '';
-  let hasAny = false;
   Object.keys(SUBJ_FULL).forEach(k => {
     if (!state.subjects.includes(k)) return;
     const avg = getSubjectAverage(k);
-    if (!avg) return;
-    hasAny = true;
+    if (!avg) {
+      html += `<div class="subj-avg-card">
+        <div class="subj-avg-dot" style="background:${SUBJ_COLORS[k]}"></div>
+        <div class="subj-avg-info">
+          <div class="subj-avg-name">${SUBJ_NAMES[k]}</div>
+          <div class="subj-avg-detail" style="color:var(--text-muted)">No marks yet</div>
+        </div>
+        <div class="subj-avg-pct" style="color:var(--text-muted)">—</div>
+      </div>`;
+      return;
+    }
     const color = avg.avg >= 60 ? 'var(--done)' : avg.avg >= 40 ? 'var(--process)' : 'var(--urgent)';
+    const disclaimer = avg.count <= 2 ? ' · limited data' : '';
     html += `<div class="subj-avg-card">
       <div class="subj-avg-dot" style="background:${SUBJ_COLORS[k]}"></div>
       <div class="subj-avg-info">
         <div class="subj-avg-name">${SUBJ_NAMES[k]}</div>
-        <div class="subj-avg-detail">${avg.count} mark${avg.count>1?'s':''} entered</div>
+        <div class="subj-avg-detail">${avg.count} mark${avg.count>1?'s':''}${disclaimer}</div>
       </div>
       <div class="subj-avg-pct" style="color:${color}">${avg.avg}%</div>
     </div>`;
   });
-  if (!hasAny) html = '<div style="text-align:center;color:var(--text-light);font-size:0.82em;padding:12px">Enter marks on your assessments to see averages here</div>';
   document.getElementById('subjectAverages').innerHTML = html;
 }
 
@@ -1893,8 +1925,9 @@ function getStudyRecommendations() {
     if (days <= 3) { score += 50; reasons.push('due very soon'); }
     else if (days <= 7) { score += 35; reasons.push(`due in ${days} days`); }
     else if (days <= 14) { score += 20; reasons.push(`due in ${days} days`); }
-    else if (days <= 21) { score += 10; }
-    else if (days <= 42) { score += 5; }
+    else if (days <= 21) { score += 10; reasons.push(`due in ${days} days`); }
+    else if (days <= 42) { score += 5; reasons.push(`due in ${days} days`); }
+    else { reasons.push(`due in ${days} days`); }
 
     // Weight: higher contribution = more important
     if (a.w >= 15) { score += 20; reasons.push('high weight (' + a.w + '%)'); }
@@ -2517,8 +2550,8 @@ function showWeeklyReview() {
   });
 
   let html = `<button class="modal-close" onclick="closeModal()">&times;</button>
-    <h3 style="margin-bottom:4px">Weekly Review</h3>
-    <div style="font-size:0.75em;color:var(--text-light);margin-bottom:14px">${weekStart.getDate()} ${MONTHS_SHORT[weekStart.getMonth()]} – ${weekEnd.getDate()} ${MONTHS_SHORT[weekEnd.getMonth()]} ${weekEnd.getFullYear()}</div>
+    <h3 style="margin-bottom:4px">This Week's Summary</h3>
+    <div style="font-size:0.75em;color:var(--text-light);margin-bottom:14px">Current week: ${weekStart.getDate()} ${MONTHS_SHORT[weekStart.getMonth()]} – ${weekEnd.getDate()} ${MONTHS_SHORT[weekEnd.getMonth()]} ${weekEnd.getFullYear()}</div>
 
     <div class="review-stat-row">
       <div class="review-stat">
@@ -2540,7 +2573,7 @@ function showWeeklyReview() {
     </div>`;
 
   if (thisWeekTasks.length > 0) {
-    html += `<div style="font-size:0.85em;font-weight:700;margin:12px 0 6px">This Week</div>`;
+    html += `<div style="font-size:0.85em;font-weight:700;margin:12px 0 6px">Current Week (${thisWeekTasks.length} due)</div>`;
     thisWeekTasks.forEach(a => {
       const isDone = state.done[a.id];
       const dotColor = isDone ? 'var(--done)' : getDaysUntil(a.date) < 0 ? 'var(--urgent)' : 'var(--upcoming)';
@@ -2558,7 +2591,7 @@ function showWeeklyReview() {
   }
 
   if (nextWeekTasks.length > 0) {
-    html += `<div style="font-size:0.85em;font-weight:700;margin:12px 0 6px">Next Week (${nextWeekTasks.length} due)</div>`;
+    html += `<div style="font-size:0.85em;font-weight:700;margin:12px 0 6px">Upcoming Week (${nextWeekTasks.length} due)</div>`;
     nextWeekTasks.forEach(a => {
       html += `<div class="review-week-item">
         <div class="review-status-dot" style="background:${SUBJ_COLORS[a.s]}"></div>
