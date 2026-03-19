@@ -667,7 +667,60 @@ body {
 }
 .fe-approve-btn.approved { background:var(--done); border-color:var(--done); color:#020617; }
 
-@media (min-width:600px) { .page { max-width:600px; margin:0 auto; } }
+/* Onboarding */
+.onboarding-overlay {
+  position:fixed; inset:0; background:var(--bg); z-index:500;
+  display:flex; flex-direction:column; overflow-y:auto;
+}
+.onboarding-overlay.hidden { display:none; }
+.ob-page { display:none; flex-direction:column; min-height:100vh; padding:24px 20px calc(24px + var(--safe-bottom)); }
+.ob-page.active { display:flex; }
+.ob-header { text-align:center; margin-bottom:24px; padding-top:var(--safe-top); }
+.ob-header h1 { font-size:1.8em; font-weight:900; background:linear-gradient(135deg, var(--primary), var(--accent-violet)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.ob-header p { color:var(--text-light); font-size:0.88em; margin-top:6px; }
+.ob-body { flex:1; }
+.ob-footer { display:flex; gap:8px; margin-top:20px; }
+.ob-btn {
+  flex:1; padding:14px; border:none; border-radius:12px;
+  font-size:0.9em; font-weight:700; cursor:pointer; transition:all 0.2s;
+}
+.ob-btn-primary { background:var(--primary); color:#020617; }
+.ob-btn-secondary { background:var(--card); color:var(--text-light); border:1px solid var(--border-strong); }
+.ob-btn:active { transform:scale(0.97); }
+.ob-input {
+  width:100%; padding:12px 14px; border:1px solid var(--border-strong);
+  border-radius:12px; font-size:0.9em; background:var(--card); color:var(--text);
+  font-family:inherit; margin-bottom:10px;
+}
+.ob-input:focus { border-color:var(--primary); outline:none; }
+.ob-label { font-size:0.82em; font-weight:600; color:var(--text-light); margin-bottom:6px; display:block; }
+.ob-subj-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.ob-subj-chip {
+  padding:10px 14px; border-radius:12px; border:2px solid var(--border-strong);
+  background:var(--card); font-size:0.82em; font-weight:600; cursor:pointer;
+  transition:all 0.2s; color:var(--text-light);
+}
+.ob-subj-chip.selected { border-color:var(--primary); background:rgba(56,189,248,0.1); color:var(--primary); }
+.ob-template-card {
+  background:var(--card); border:2px solid var(--border-strong); border-radius:14px;
+  padding:16px; margin-bottom:10px; cursor:pointer; transition:all 0.2s;
+}
+.ob-template-card.selected { border-color:var(--primary); background:rgba(56,189,248,0.08); }
+.ob-template-card h4 { font-size:0.9em; margin-bottom:4px; }
+.ob-template-card p { font-size:0.75em; color:var(--text-muted); }
+.ob-step-dots { display:flex; justify-content:center; gap:8px; margin-bottom:20px; }
+.ob-dot { width:8px; height:8px; border-radius:50%; background:var(--border-strong); transition:all 0.2s; }
+.ob-dot.active { background:var(--primary); width:24px; }
+
+/* Assessment editor */
+.assess-edit-btn {
+  background:var(--card-elevated); border:none; color:var(--text-light);
+  padding:3px 8px; border-radius:6px; font-size:0.68em; font-weight:600;
+  cursor:pointer; margin-left:6px;
+}
+.assess-edit-btn:active { color:var(--primary); }
+
+@media (min-width:600px) { .page { max-width:600px; margin:0 auto; } .onboarding-overlay { align-items:center; } .ob-page { max-width:480px; } }
 </style>
 </head>
 <body>
@@ -684,6 +737,98 @@ body {
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="onboarding-overlay hidden" id="onboarding">
+  <!-- Step 1: Welcome -->
+  <div class="ob-page active" id="ob-step-1">
+    <div class="ob-header" style="margin-top:40px">
+      <h1>StudyM8</h1>
+      <p>Your Gr12 study planner</p>
+    </div>
+    <div class="ob-step-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+    <div class="ob-body">
+      <div class="ob-label">Name</div>
+      <input class="ob-input" id="obName" placeholder="Your first name">
+      <div class="ob-label">Surname</div>
+      <input class="ob-input" id="obSurname" placeholder="Your surname">
+      <div class="ob-label">School / Institution</div>
+      <input class="ob-input" id="obSchool" placeholder="e.g. Impaq, Curro, Hoerskool...">
+      <div class="ob-label">Grade</div>
+      <select class="ob-input" id="obGrade">
+        <option value="10">Grade 10</option>
+        <option value="11">Grade 11</option>
+        <option value="12" selected>Grade 12</option>
+      </select>
+    </div>
+    <div class="ob-footer">
+      <button class="ob-btn ob-btn-primary" onclick="obNext(2)">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Choose Subjects -->
+  <div class="ob-page" id="ob-step-2">
+    <div class="ob-header">
+      <h1>Your Subjects</h1>
+      <p>Select the subjects you take</p>
+    </div>
+    <div class="ob-step-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+    <div class="ob-body">
+      <div class="ob-subj-grid" id="obSubjectGrid"></div>
+    </div>
+    <div class="ob-footer">
+      <button class="ob-btn ob-btn-secondary" onclick="obNext(1)">Back</button>
+      <button class="ob-btn ob-btn-primary" onclick="obNext(3)">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Choose Template -->
+  <div class="ob-page" id="ob-step-3">
+    <div class="ob-header">
+      <h1>Assessment Plan</h1>
+      <p>Start with a template or build your own</p>
+    </div>
+    <div class="ob-step-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
+    <div class="ob-body">
+      <div class="ob-template-card selected" id="obTplDefault" onclick="selectObTemplate('default')">
+        <h4>Impaq Gr12 Template</h4>
+        <p>Pre-loaded assessment plan with all dates, weights, and tasks for 7 subjects. Based on 2026 Impaq curriculum.</p>
+      </div>
+      <div class="ob-template-card" id="obTplEmpty" onclick="selectObTemplate('empty')">
+        <h4>Start Empty</h4>
+        <p>No assessments loaded. Add your own tasks manually via the assessment editor.</p>
+      </div>
+      <div class="ob-template-card" id="obTplImport" onclick="selectObTemplate('import')">
+        <h4>Import from Friend</h4>
+        <p>Paste a shared template code from a friend who already set up their plan.</p>
+      </div>
+      <div id="obImportArea" style="display:none;margin-top:10px">
+        <textarea class="ob-input" id="obImportCode" rows="3" placeholder="Paste template code here..." style="resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="ob-footer">
+      <button class="ob-btn ob-btn-secondary" onclick="obNext(2)">Back</button>
+      <button class="ob-btn ob-btn-primary" onclick="obNext(4)">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Ready -->
+  <div class="ob-page" id="ob-step-4">
+    <div class="ob-header" style="margin-top:60px">
+      <div style="font-size:3em;margin-bottom:10px">🎓</div>
+      <h1 id="obReadyName">You're Ready!</h1>
+      <p>Your planner is set up. You can always edit assessments and subjects later.</p>
+    </div>
+    <div class="ob-step-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div>
+    <div class="ob-body" style="text-align:center">
+      <div id="obSummary" style="font-size:0.85em;color:var(--text-light)"></div>
+    </div>
+    <div class="ob-footer">
+      <button class="ob-btn ob-btn-secondary" onclick="obNext(3)">Back</button>
+      <button class="ob-btn ob-btn-primary" onclick="finishOnboarding()">Let's Go!</button>
+    </div>
+  </div>
 </div>
 
 <div class="app-header" id="appHeader">
@@ -767,6 +912,7 @@ body {
       </select>
     </div>
     <div class="filter-row" id="filterRow"></div>
+    <button class="add-study-btn" onclick="showAddAssessment()" style="margin-bottom:12px">+ Add Assessment</button>
     <div id="timelineList"></div>
   </div>
 </div>
@@ -851,7 +997,8 @@ body {
   </div>
 
   <div class="card" style="text-align:center">
-    <button class="modal-btn" onclick="exportAllData()" style="background:var(--done)">Export Data</button>
+    <button class="modal-btn" onclick="exportTemplate()" style="background:var(--primary);color:#020617">Share Template</button>
+    <button class="modal-btn" onclick="exportAllData()" style="background:var(--done);margin-top:6px">Export Data</button>
     <button class="modal-btn modal-btn-outline" onclick="showResetConfirm()" style="margin-top:6px; color:var(--urgent); border-color:var(--urgent)">Reset All</button>
   </div>
   </div><!-- end profileTab-details -->
@@ -904,19 +1051,48 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const DAYS_SHORT = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
-const SUBJ_COLORS = {
-  afrikaans:'#F472B6', english:'#38BDF8', geografie:'#22C55E',
-  landbou:'#FB923C', lo:'#A78BFA', lewenswet:'#22D3EE', wiskundig:'#A8A29E'
+// Master subject list — all common SA matric subjects
+const MASTER_SUBJECTS = {
+  afrikaans:    {short:'Afrikaans',  full:'Afrikaans Huistaal',           color:'#F472B6'},
+  afrikaans_eat:{short:'Afr EAT',   full:'Afrikaans Eerste Addisionele Taal', color:'#EC4899'},
+  english:      {short:'English',    full:'English Home Language',        color:'#38BDF8'},
+  english_fal:  {short:'Eng FAL',    full:'English First Additional Lang',color:'#0EA5E9'},
+  wiskunde:     {short:'Wiskunde',   full:'Wiskunde (Mathematics)',       color:'#6366F1'},
+  wiskundig:    {short:'Wisk Gel',   full:'Wiskundige Geletterdheid',     color:'#A8A29E'},
+  fisiese_wet:  {short:'Fisika',     full:'Fisiese Wetenskappe',          color:'#F43F5E'},
+  lewenswet:    {short:'Lewenswet',  full:'Lewenswetenskappe',            color:'#22D3EE'},
+  geografie:    {short:'Geografie',  full:'Geografie',                    color:'#22C55E'},
+  geskiedenis:  {short:'Gesk',       full:'Geskiedenis',                  color:'#D97706'},
+  rekeningkunde:{short:'Rek',        full:'Rekeningkunde',                color:'#14B8A6'},
+  besigheidstudies:{short:'Besigheid',full:'Besigheidstudies',            color:'#8B5CF6'},
+  ekonomie:     {short:'Ekonomie',   full:'Ekonomie',                     color:'#F97316'},
+  landbou:      {short:'Landbou',    full:'Landboubestuurspraktyke',      color:'#FB923C'},
+  lo:           {short:'LO',         full:'Lewensorientering',            color:'#A78BFA'},
+  verbruikerstudies:{short:'Verbr',  full:'Verbruikerstudies',            color:'#E879F9'},
+  toerisme:     {short:'Toerisme',   full:'Toerisme',                     color:'#2DD4BF'},
+  it:           {short:'IT',         full:'Inligtingstegnologie',         color:'#60A5FA'},
+  igt:          {short:'IGT',        full:'Ingenieursgrafika en -ontwerp',color:'#A3E635'},
+  kuns:         {short:'Kuns',       full:'Visuele Kunste',               color:'#FB7185'},
+  dramatiese:   {short:'Drama',      full:'Dramatiese Kunste',            color:'#C084FC'},
+  musiek:       {short:'Musiek',     full:'Musiek',                       color:'#FBBF24'},
 };
-const SUBJ_NAMES = {
-  afrikaans:'Afrikaans', english:'English', geografie:'Geografie',
-  landbou:'Landbou', lo:'LO', lewenswet:'Lewenswet', wiskundig:'Wisk Gel'
-};
-const SUBJ_FULL = {
-  afrikaans:'Afrikaans Huistaal', english:'English FAL', geografie:'Geografie',
-  landbou:'Agricultural Management Practices', lo:'Life Orientation',
-  lewenswet:'Life Sciences', wiskundig:'Mathematical Literacy'
-};
+
+// Dynamic — built from user's selected subjects
+let SUBJ_COLORS = {};
+let SUBJ_NAMES = {};
+let SUBJ_FULL = {};
+
+function rebuildSubjectMaps() {
+  SUBJ_COLORS = {}; SUBJ_NAMES = {}; SUBJ_FULL = {};
+  (state.subjects || []).forEach(k => {
+    const m = MASTER_SUBJECTS[k];
+    if (m) {
+      SUBJ_COLORS[k] = m.color;
+      SUBJ_NAMES[k] = m.short;
+      SUBJ_FULL[k] = m.full;
+    }
+  });
+}
 
 // ===== NSC FINAL EXAM DATES (public school defaults — editable) =====
 const DEFAULT_FINALS = [
@@ -1006,8 +1182,8 @@ const WEEKLY_TEMPLATE = [
   {day:0, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
 ];
 
-// ===== ASSESSMENT DATA =====
-const DATA = [
+// ===== DEFAULT ASSESSMENT TEMPLATE (Impaq Gr12 2026) =====
+const DEFAULT_DATA = [
   {id:'af1',s:'afrikaans',task:'Taak 1',type:'Mondeling',desc:'Luisterbegrip',total:15,date:'2026-06-15',q:1,w:10.0},
   {id:'af2',s:'afrikaans',task:'Taak 2',type:'Taak',desc:'Skryf: Opstel',total:50,date:'2026-03-27',q:1,w:6.12,mark:'42/50',cont:5.14,preset:'done'},
   {id:'af3',s:'afrikaans',task:'Taak 3',type:'Taak',desc:'Skryf: Transaksionele teks',total:25,date:'2026-03-27',q:1,w:3.06,preset:'process'},
@@ -1085,16 +1261,16 @@ const ACHIEVEMENTS = [
   {id:'five_done', icon:'⭐', name:'High Five', desc:'5 tasks completed', xp:100, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 5},
   {id:'ten_done', icon:'🔥', name:'On Fire', desc:'10 tasks completed', xp:200, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 10},
   {id:'twenty_done', icon:'💪', name:'Powerhouse', desc:'20 tasks completed', xp:400, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= 20},
-  {id:'half_done', icon:'🏆', name:'Halfway', desc:'Half of all tasks completed', xp:500, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= Math.floor(DATA.length/2)},
-  {id:'all_done', icon:'👑', name:'Matric Boss', desc:'All tasks completed!', xp:1000, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= DATA.length},
-  {id:'first_exam', icon:'📝', name:'Exam Survivor', desc:'First exam completed', xp:150, check: s => DATA.some(a => a.type==='Eksamen' && s.done[a.id])},
+  {id:'half_done', icon:'🏆', name:'Halfway', desc:'Half of all tasks completed', xp:500, check: s => Object.keys(s.done).filter(k=>s.done[k]).length >= Math.floor(activeData().length/2)},
+  {id:'all_done', icon:'👑', name:'Matric Boss', desc:'All tasks completed!', xp:1000, check: s => activeData().length > 0 && Object.keys(s.done).filter(k=>s.done[k]).length >= activeData().length},
+  {id:'first_exam', icon:'📝', name:'Exam Survivor', desc:'First exam completed', xp:150, check: s => getData().some(a => a.type==='Eksamen' && s.done[a.id])},
   {id:'profile_set', icon:'📸', name:'Selfie', desc:'Profile photo uploaded', xp:30, check: s => !!s.profile?.avatar},
   {id:'note_taker', icon:'📋', name:'Note Taker', desc:'First note added', xp:30, check: s => Object.keys(s.notes||{}).some(k => s.notes[k])},
   {id:'streak_3', icon:'🔥', name:'3 Day Streak', desc:'3 days in a row', xp:75, check: s => (s.streak||0) >= 3},
   {id:'streak_7', icon:'💥', name:'Week Warrior', desc:'7 day streak', xp:200, check: s => (s.streak||0) >= 7},
   {id:'all_subjects', icon:'🌈', name:'Allrounder', desc:'At least 1 task per subject done', xp:300, check: s => {
-    const subjs = new Set(DATA.filter(a=>s.done[a.id]).map(a=>a.s));
-    return subjs.size >= 7;
+    const subjs = new Set(getData().filter(a=>s.done[a.id]).map(a=>a.s));
+    return s.subjects && s.subjects.length > 0 && subjs.size >= s.subjects.length;
   }},
 ];
 
@@ -1116,24 +1292,38 @@ if (!state.notes) state.notes = {};
 if (!state.marks) state.marks = {};
 if (!state.achievements) state.achievements = {};
 if (!state.friends) state.friends = [];
-if (!state.profile) state.profile = {name:'Marita', surname:'Postma', school:'Impaq', grade:'12', motto:'Work hard, dream big', avatar:null};
+if (!state.profile) state.profile = {name:'', surname:'', school:'', grade:'12', motto:'', avatar:null};
 if (!state.xp) state.xp = 0;
 if (!state.streak) state.streak = 0;
 if (!state.lastVisit) state.lastVisit = null;
-if (!state.subjects) state.subjects = Object.keys(SUBJ_FULL);
+if (!state.subjects) state.subjects = [];
+if (!state.assessments) state.assessments = null; // null = not yet set up
+if (state.onboarded === undefined) state.onboarded = false;
 if (!state.finals) state.finals = {};
 if (!state.finalsApproved) state.finalsApproved = {};
-if (!state.studyBlocks) state.studyBlocks = {};  // {dateStr: [{id, subject, title, time, done}]}
-if (!state.templateDone) state.templateDone = {};  // {"2026-03-18_3": true} — date + template index
-if (!state.showRoutine) state.showRoutine = true;   // toggle routine blocks visibility
-if (!state.homework) state.homework = [];         // [{id, subject, title, desc, dueDate, done}]
-if (!state.resources) state.resources = {};        // {subject: [{id, type, title, content, date}]}
+if (!state.studyBlocks) state.studyBlocks = {};
+if (!state.templateDone) state.templateDone = {};
+if (!state.showRoutine) state.showRoutine = true;
+if (!state.homework) state.homework = [];
+if (!state.resources) state.resources = {};
 
-// Init presets
-DATA.forEach(a => {
-  if (a.preset === 'done' && !(a.id in state.done)) state.done[a.id] = true;
-  if (a.mark && !state.marks[a.id]) state.marks[a.id] = a.mark;
-});
+// DATA accessor — uses state.assessments if set, falls back to default
+function getData() { return state.assessments || DEFAULT_DATA; }
+// Alias for compatibility
+let DATA = getData();
+
+// Build subject maps from state
+rebuildSubjectMaps();
+
+// Init presets for default template only (on first load before onboarding)
+if (state.assessments === null && state.onboarded) {
+  // User onboarded but has no assessments — they chose empty
+} else {
+  getData().forEach(a => {
+    if (a.preset === 'done' && !(a.id in state.done)) state.done[a.id] = true;
+    if (a.mark && !state.marks[a.id]) state.marks[a.id] = a.mark;
+  });
+}
 
 // Streak logic
 (function updateStreak() {
@@ -1240,7 +1430,10 @@ function renderItem(a) {
       ${statusHtml}
     </div>
     <div class="expand-row" onclick="event.stopPropagation()">
-      <div style="margin-bottom:4px"><b>Quarter ${a.q}</b> | Weight: ${a.w}%</div>
+      <div style="margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">
+        <span><b>Quarter ${a.q}</b> | Weight: ${a.w}%</span>
+        <button class="assess-edit-btn" onclick="editAssessment('${a.id}')">Edit</button>
+      </div>
       <div class="mark-input-row">
         <span style="font-size:0.85em;font-weight:600">Mark:</span>
         <input class="mark-input" type="number" min="0" max="${a.total}" placeholder="0" value="${mark ? mark.split('/')[0] : ''}" onchange="saveMark('${a.id}',this.value,${a.total})">
@@ -1256,7 +1449,7 @@ function toggleExpand(el) { el.classList.toggle('expanded'); }
 function saveNote(id,val) { state.notes[id]=val; saveState(); }
 
 // Filter data by active subjects
-function activeData() { return DATA.filter(a => state.subjects.includes(a.s)); }
+function activeData() { return getData().filter(a => state.subjects.includes(a.s)); }
 
 // ===== HOME =====
 function renderHome() {
@@ -1625,11 +1818,12 @@ function renderProfile() {
     document.getElementById('profileAvatarPlaceholder').textContent = (p.name||'M')[0];
   }
 
-  // Subject toggles
+  // Subject toggles — show all master subjects
   let togHtml = '';
-  Object.keys(SUBJ_FULL).forEach(k => {
+  Object.keys(MASTER_SUBJECTS).forEach(k => {
+    const m = MASTER_SUBJECTS[k];
     const active = state.subjects.includes(k);
-    togHtml += `<span class="subj-toggle-chip ${active?'active':''}" style="${active?'background:'+SUBJ_COLORS[k]+';border-color:transparent':'border-color:#ddd'}" onclick="toggleSubject('${k}', this)">${SUBJ_FULL[k]}</span>`;
+    togHtml += `<span class="subj-toggle-chip ${active?'active':''}" style="${active?'background:'+m.color+';border-color:transparent;color:white':'border-color:var(--border-strong)'}" onclick="toggleSubject('${k}', this)">${m.full}</span>`;
   });
   document.getElementById('subjectToggles').innerHTML = togHtml;
 
@@ -1703,6 +1897,7 @@ function toggleSubject(k, el) {
   const idx = state.subjects.indexOf(k);
   if (idx >= 0) state.subjects.splice(idx,1);
   else state.subjects.push(k);
+  rebuildSubjectMaps();
   saveState();
   renderAll();
 }
@@ -2798,6 +2993,309 @@ function fmtShortDate(examDate, daysOffset) {
   return `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`;
 }
 
+// ===== ONBOARDING =====
+let obSelectedSubjects = [];
+let obTemplate = 'default';
+
+function showOnboarding() {
+  document.getElementById('onboarding').classList.remove('hidden');
+  renderObSubjects();
+}
+
+function obNext(step) {
+  // Validate current step
+  if (step === 2) {
+    const name = document.getElementById('obName').value.trim();
+    if (!name) { toast('Please enter your name'); return; }
+  }
+  if (step === 3) {
+    if (obSelectedSubjects.length < 2) { toast('Select at least 2 subjects'); return; }
+  }
+  if (step === 4) {
+    // Prepare summary
+    const name = document.getElementById('obName').value.trim();
+    document.getElementById('obReadyName').textContent = `${name}, you're ready!`;
+    const tplName = obTemplate === 'default' ? 'Impaq Gr12 template' : obTemplate === 'import' ? 'Imported template' : 'Empty (add your own)';
+    document.getElementById('obSummary').innerHTML = `
+      <div style="margin-bottom:8px"><b>${obSelectedSubjects.length}</b> subjects selected</div>
+      <div style="margin-bottom:8px">Template: <b>${tplName}</b></div>
+      <div>You can edit everything later</div>
+    `;
+  }
+
+  document.querySelectorAll('.ob-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('ob-step-' + step).classList.add('active');
+}
+
+function renderObSubjects() {
+  let html = '';
+  Object.keys(MASTER_SUBJECTS).forEach(k => {
+    const m = MASTER_SUBJECTS[k];
+    const sel = obSelectedSubjects.includes(k);
+    html += `<div class="ob-subj-chip ${sel ? 'selected' : ''}" style="${sel ? 'border-color:' + m.color + ';color:' + m.color : ''}" onclick="toggleObSubject('${k}')">${m.full}</div>`;
+  });
+  document.getElementById('obSubjectGrid').innerHTML = html;
+}
+
+function toggleObSubject(k) {
+  const idx = obSelectedSubjects.indexOf(k);
+  if (idx >= 0) obSelectedSubjects.splice(idx, 1);
+  else obSelectedSubjects.push(k);
+  renderObSubjects();
+}
+
+function selectObTemplate(tpl) {
+  obTemplate = tpl;
+  document.querySelectorAll('.ob-template-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('obTpl' + tpl.charAt(0).toUpperCase() + tpl.slice(1)).classList.add('selected');
+  document.getElementById('obImportArea').style.display = tpl === 'import' ? 'block' : 'none';
+}
+
+function finishOnboarding() {
+  // Save profile
+  state.profile.name = document.getElementById('obName').value.trim();
+  state.profile.surname = document.getElementById('obSurname').value.trim();
+  state.profile.school = document.getElementById('obSchool').value.trim();
+  state.profile.grade = document.getElementById('obGrade').value;
+  state.subjects = obSelectedSubjects;
+
+  // Load template
+  if (obTemplate === 'default') {
+    // Filter default data to selected subjects
+    state.assessments = DEFAULT_DATA.filter(a => state.subjects.includes(a.s)).map(a => ({...a}));
+    // Apply presets
+    state.assessments.forEach(a => {
+      if (a.preset === 'done' && !(a.id in state.done)) state.done[a.id] = true;
+      if (a.mark && !state.marks[a.id]) state.marks[a.id] = a.mark;
+    });
+  } else if (obTemplate === 'import') {
+    try {
+      const code = document.getElementById('obImportCode').value.trim();
+      const imported = JSON.parse(atob(code));
+      if (imported.assessments) state.assessments = imported.assessments;
+      if (imported.subjects) state.subjects = imported.subjects;
+    } catch (e) {
+      toast('Invalid import code — starting empty');
+      state.assessments = [];
+    }
+  } else {
+    state.assessments = [];
+  }
+
+  state.onboarded = true;
+  DATA = getData();
+  rebuildSubjectMaps();
+  saveState();
+
+  document.getElementById('onboarding').classList.add('hidden');
+  renderAll();
+  renderProfile();
+  renderStudy();
+  renderResources();
+  checkAchievements();
+  toast(`Welcome, ${state.profile.name}!`);
+}
+
+// ===== ASSESSMENT EDITOR =====
+function showAddAssessment() {
+  let subjOpts = '';
+  state.subjects.forEach(k => {
+    const m = MASTER_SUBJECTS[k];
+    if (m) subjOpts += `<option value="${k}">${m.full}</option>`;
+  });
+
+  showModal('Add Assessment', `
+    <div class="profile-form-group">
+      <label>Subject</label>
+      <select id="aeSubject" class="subject-dropdown">${subjOpts}</select>
+    </div>
+    <div class="profile-form-group">
+      <label>Task Name</label>
+      <input id="aeName" class="note-input" placeholder="e.g. Taak 1, Test 2, Exam P1...">
+    </div>
+    <div class="profile-form-group">
+      <label>Type</label>
+      <select id="aeType" class="subject-dropdown">
+        <option value="Taak">Taak</option>
+        <option value="Toets">Toets</option>
+        <option value="Eksamen">Eksamen</option>
+        <option value="Mondeling">Mondeling</option>
+        <option value="PAT">PAT</option>
+      </select>
+    </div>
+    <div class="profile-form-group">
+      <label>Description</label>
+      <input id="aeDesc" class="note-input" placeholder="e.g. Kwartaaltoets, Chapter 1-4...">
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="profile-form-group" style="flex:1">
+        <label>Total Marks</label>
+        <input id="aeTotal" type="number" class="note-input" placeholder="e.g. 50" min="1">
+      </div>
+      <div class="profile-form-group" style="flex:1">
+        <label>Weight %</label>
+        <input id="aeWeight" type="number" class="note-input" placeholder="e.g. 10" min="0" step="0.1">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="profile-form-group" style="flex:1">
+        <label>Due Date</label>
+        <input id="aeDate" type="date" class="note-input">
+      </div>
+      <div class="profile-form-group" style="flex:1">
+        <label>Quarter</label>
+        <select id="aeQuarter" class="subject-dropdown">
+          <option value="1">Q1</option>
+          <option value="2">Q2</option>
+          <option value="3">Q3</option>
+          <option value="4">Q4</option>
+        </select>
+      </div>
+    </div>
+    <button class="modal-btn" onclick="addAssessment()">Add Assessment</button>
+  `);
+}
+
+function addAssessment() {
+  const name = document.getElementById('aeName').value.trim();
+  const desc = document.getElementById('aeDesc').value.trim();
+  const total = parseInt(document.getElementById('aeTotal').value) || 50;
+  const date = document.getElementById('aeDate').value;
+  if (!name) { toast('Enter a task name'); return; }
+  if (!date) { toast('Select a due date'); return; }
+
+  if (!state.assessments) state.assessments = [];
+  const id = 'usr_' + Date.now();
+  state.assessments.push({
+    id,
+    s: document.getElementById('aeSubject').value,
+    task: name,
+    type: document.getElementById('aeType').value,
+    desc: desc,
+    total,
+    date,
+    q: parseInt(document.getElementById('aeQuarter').value),
+    w: parseFloat(document.getElementById('aeWeight').value) || 0
+  });
+
+  DATA = getData();
+  saveState();
+  closeModal();
+  renderAll();
+  toast('Assessment added!');
+}
+
+function editAssessment(id) {
+  const a = getData().find(x => x.id === id);
+  if (!a) return;
+
+  let subjOpts = '';
+  state.subjects.forEach(k => {
+    const m = MASTER_SUBJECTS[k];
+    if (m) subjOpts += `<option value="${k}" ${k === a.s ? 'selected' : ''}>${m.full}</option>`;
+  });
+
+  showModal('Edit Assessment', `
+    <div class="profile-form-group">
+      <label>Subject</label>
+      <select id="aeSubject" class="subject-dropdown">${subjOpts}</select>
+    </div>
+    <div class="profile-form-group">
+      <label>Task Name</label>
+      <input id="aeName" class="note-input" value="${(a.task||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="profile-form-group">
+      <label>Type</label>
+      <select id="aeType" class="subject-dropdown">
+        ${['Taak','Toets','Eksamen','Mondeling','PAT'].map(t => `<option value="${t}" ${t===a.type?'selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+    <div class="profile-form-group">
+      <label>Description</label>
+      <input id="aeDesc" class="note-input" value="${(a.desc||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="profile-form-group" style="flex:1">
+        <label>Total Marks</label>
+        <input id="aeTotal" type="number" class="note-input" value="${a.total}" min="1">
+      </div>
+      <div class="profile-form-group" style="flex:1">
+        <label>Weight %</label>
+        <input id="aeWeight" type="number" class="note-input" value="${a.w||0}" min="0" step="0.1">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="profile-form-group" style="flex:1">
+        <label>Due Date</label>
+        <input id="aeDate" type="date" class="note-input" value="${a.date}">
+      </div>
+      <div class="profile-form-group" style="flex:1">
+        <label>Quarter</label>
+        <select id="aeQuarter" class="subject-dropdown">
+          ${[1,2,3,4].map(q => `<option value="${q}" ${q===a.q?'selected':''}>${'Q'+q}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <button class="modal-btn" onclick="saveAssessmentEdit('${id}')">Save Changes</button>
+    <button class="modal-btn modal-btn-outline" style="margin-top:6px;color:var(--urgent);border-color:var(--urgent)" onclick="deleteAssessment('${id}')">Delete Assessment</button>
+  `);
+}
+
+function saveAssessmentEdit(id) {
+  if (!state.assessments) state.assessments = getData().map(a => ({...a}));
+  const a = state.assessments.find(x => x.id === id);
+  if (!a) return;
+
+  a.s = document.getElementById('aeSubject').value;
+  a.task = document.getElementById('aeName').value.trim();
+  a.type = document.getElementById('aeType').value;
+  a.desc = document.getElementById('aeDesc').value.trim();
+  a.total = parseInt(document.getElementById('aeTotal').value) || 50;
+  a.w = parseFloat(document.getElementById('aeWeight').value) || 0;
+  a.date = document.getElementById('aeDate').value;
+  a.q = parseInt(document.getElementById('aeQuarter').value);
+
+  DATA = getData();
+  saveState();
+  closeModal();
+  renderAll();
+  toast('Assessment updated!');
+}
+
+function deleteAssessment(id) {
+  if (!state.assessments) state.assessments = getData().map(a => ({...a}));
+  state.assessments = state.assessments.filter(a => a.id !== id);
+  delete state.done[id];
+  delete state.marks[id];
+  delete state.notes[id];
+
+  DATA = getData();
+  saveState();
+  closeModal();
+  renderAll();
+  toast('Assessment deleted');
+}
+
+function exportTemplate() {
+  const tpl = {
+    assessments: state.assessments || getData(),
+    subjects: state.subjects,
+    school: state.profile.school,
+    exportedBy: state.profile.name,
+    date: TODAY.toISOString().split('T')[0]
+  };
+  const code = btoa(JSON.stringify(tpl));
+  const text = `StudyM8 Template by ${state.profile.name}\nSubjects: ${state.subjects.length}\nAssessments: ${tpl.assessments.length}\n\nTemplate code:\n${code}`;
+
+  if (navigator.share) {
+    navigator.share({title: 'StudyM8 Template', text}).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(code).then(() => toast('Template code copied!')).catch(() => {
+      showModal('Export Template', `<textarea class="note-input" style="min-height:100px" readonly>${code}</textarea><p style="font-size:0.78em;color:var(--text-light);margin-top:8px">Copy this code and send to your friend</p>`);
+    });
+  }
+}
+
 // ===== NAV =====
 function showPage(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -2818,7 +3316,27 @@ function renderAll() {
   renderCalendar();
 }
 
-// Init
+// Init — check if onboarding needed
+if (!state.onboarded) {
+  // Check for existing users (backwards compat: they have profile name set)
+  if (state.profile && state.profile.name && state.profile.name !== '') {
+    // Existing user — migrate: mark as onboarded, use default data
+    state.onboarded = true;
+    if (!state.assessments) {
+      state.assessments = DEFAULT_DATA.map(a => ({...a}));
+    }
+    if (state.subjects.length === 0) {
+      state.subjects = ['afrikaans','english','geografie','landbou','lo','lewenswet','wiskundig'];
+    }
+    rebuildSubjectMaps();
+    DATA = getData();
+    saveState();
+  } else {
+    showOnboarding();
+  }
+}
+rebuildSubjectMaps();
+DATA = getData();
 renderAll();
 renderProfile();
 renderStudy();
