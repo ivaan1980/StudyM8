@@ -780,7 +780,7 @@ body {
     <div class="profile-avatar-wrap" onclick="document.getElementById('avatarInput').click()">
       <span class="avatar-placeholder" id="profileAvatarPlaceholder">M</span>
       <img id="profileAvatarImg" style="display:none">
-      <div class="avatar-edit-hint">Tap to change</div>
+      <div class="avatar-edit-hint">Edit</div>
     </div>
     <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
     <div class="profile-name" id="profileDisplayName">Marita Postma</div>
@@ -903,7 +903,7 @@ const SUBJ_COLORS = {
 };
 const SUBJ_NAMES = {
   afrikaans:'Afrikaans', english:'English', geografie:'Geografie',
-  landbou:'Agric Mgmt', lo:'Life Orient.', lewenswet:'Life Sciences', wiskundig:'Maths Lit.'
+  landbou:'Landbou', lo:'LO', lewenswet:'Lewenswet', wiskundig:'Wisk Gel'
 };
 const SUBJ_FULL = {
   afrikaans:'Afrikaans Huistaal', english:'English FAL', geografie:'Geografie',
@@ -940,9 +940,9 @@ const WEEKLY_TEMPLATE = [
   {day:1, time:'14:30', end:'16:30', title:'Gym', cat:'routine'},
   {day:1, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
   {day:1, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
-  {day:1, time:'18:30', end:'18:55', title:'Geography', cat:'study', subject:'geografie'},
-  {day:1, time:'19:00', end:'19:25', title:'English', cat:'study', subject:'english'},
-  {day:1, time:'19:30', end:'20:00', title:'Maths Literacy', cat:'study', subject:'wiskundig'},
+  {day:1, time:'18:30', end:'18:55', title:'Geografie', cat:'study', subject:'geografie'},
+  {day:1, time:'19:00', end:'19:25', title:'Engels', cat:'study', subject:'english'},
+  {day:1, time:'19:30', end:'20:00', title:'Wiskunde Gel.', cat:'study', subject:'wiskundig'},
   {day:1, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
 
   // Tuesday
@@ -953,9 +953,9 @@ const WEEKLY_TEMPLATE = [
   {day:2, time:'14:30', end:'16:30', title:'Gym', cat:'routine'},
   {day:2, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
   {day:2, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
-  {day:2, time:'18:30', end:'18:55', title:'Agric Management', cat:'study', subject:'landbou'},
+  {day:2, time:'18:30', end:'18:55', title:'Landboubestuur', cat:'study', subject:'landbou'},
   {day:2, time:'19:00', end:'19:25', title:'Afrikaans', cat:'study', subject:'afrikaans'},
-  {day:2, time:'19:30', end:'20:00', title:'Life Sciences', cat:'study', subject:'lewenswet'},
+  {day:2, time:'19:30', end:'20:00', title:'Lewenswetenskappe', cat:'study', subject:'lewenswet'},
   {day:2, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
 
   // Wednesday
@@ -966,9 +966,9 @@ const WEEKLY_TEMPLATE = [
   {day:3, time:'14:30', end:'16:30', title:'Free / Rest', cat:'routine'},
   {day:3, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
   {day:3, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
-  {day:3, time:'18:30', end:'18:55', title:'Geography', cat:'study', subject:'geografie'},
-  {day:3, time:'19:00', end:'19:25', title:'Maths Literacy', cat:'study', subject:'wiskundig'},
-  {day:3, time:'19:30', end:'20:00', title:'Agric Management', cat:'study', subject:'landbou'},
+  {day:3, time:'18:30', end:'18:55', title:'Geografie', cat:'study', subject:'geografie'},
+  {day:3, time:'19:00', end:'19:25', title:'Wiskunde Gel.', cat:'study', subject:'wiskundig'},
+  {day:3, time:'19:30', end:'20:00', title:'Landboubestuur', cat:'study', subject:'landbou'},
   {day:3, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
 
   // Thursday
@@ -979,9 +979,9 @@ const WEEKLY_TEMPLATE = [
   {day:4, time:'14:30', end:'16:30', title:'Gym', cat:'routine'},
   {day:4, time:'16:30', end:'17:00', title:'House Tasks', cat:'routine'},
   {day:4, time:'17:00', end:'17:45', title:'Homework', cat:'study', subject:'other'},
-  {day:4, time:'18:30', end:'18:55', title:'Life Sciences', cat:'study', subject:'lewenswet'},
-  {day:4, time:'19:00', end:'19:25', title:'English', cat:'study', subject:'english'},
-  {day:4, time:'19:30', end:'20:00', title:'Geography', cat:'study', subject:'geografie'},
+  {day:4, time:'18:30', end:'18:55', title:'Lewenswetenskappe', cat:'study', subject:'lewenswet'},
+  {day:4, time:'19:00', end:'19:25', title:'Engels', cat:'study', subject:'english'},
+  {day:4, time:'19:30', end:'20:00', title:'Geografie', cat:'study', subject:'geografie'},
   {day:4, time:'20:00', end:'21:30', title:'Reward Time', cat:'routine'},
 
   // Friday
@@ -1275,13 +1275,17 @@ function renderHome() {
   const xpInLevel = state.xp - level.min;
   const xpNeeded = nextLevel.min - level.min;
   const xpPct = Math.min(100, Math.round((xpInLevel/xpNeeded)*100));
+  const xpToGo = nextLevel.min - state.xp;
   document.getElementById('xpWidget').innerHTML = `
     <div class="xp-header">
       <span class="xp-level">${level.title}</span>
       <span class="xp-points">${state.xp} XP</span>
     </div>
     <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${xpPct}%"></div></div>
-    <div class="level-title">${nextLevel.min-state.xp} XP to next level</div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px">
+      <span class="level-title" style="text-align:left">${xpInLevel}/${xpNeeded} XP this level</span>
+      <span class="level-title" style="text-align:right">${xpToGo} XP to next</span>
+    </div>
   `;
 
   const next = data.find(a => !state.done[a.id] && getDaysUntil(a.date)>=0);
@@ -1296,7 +1300,7 @@ function renderHome() {
   }
 
   document.getElementById('statsRow').innerHTML = `
-    <div class="stat-card"><div class="stat-num" style="color:var(--done)">${done}</div><div class="stat-label">Done</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--done)">${done}</div><div class="stat-label">Done (total)</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--urgent)">${urgentCount}</div><div class="stat-label">Urgent</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--upcoming)">${total-done}</div><div class="stat-label">Remaining</div></div>
   `;
@@ -1308,8 +1312,9 @@ function renderHome() {
       const b = document.createElement('span');
       b.className = 'nav-badge';
       b.textContent = urgentCount;
+      b.title = urgentCount + ' urgent tasks';
       document.querySelector('[data-page="home"]').appendChild(b);
-    } else badge.textContent = urgentCount;
+    } else { badge.textContent = urgentCount; badge.title = urgentCount + ' urgent tasks'; }
   } else if (badge) badge.remove();
 
   const urgentItems = data.filter(a=>{const s=getStatus(a); return s==='urgent'||s==='overdue'||s==='process'||s==='soon';});
@@ -1917,6 +1922,12 @@ function getStudyRecommendations() {
   return scored.slice(0, 4);
 }
 
+function showStudyTodayItem(id) {
+  const a = DATA.find(x => x.id === id);
+  if (!a) return;
+  showModal(SUBJ_FULL[a.s], renderItem(a));
+}
+
 function renderStudyToday() {
   const recs = getStudyRecommendations();
   if (!recs.length) {
@@ -1927,8 +1938,8 @@ function renderStudyToday() {
   let html = `<div class="study-today-card">
     <h3>📖 Study Today</h3>`;
   recs.forEach((r, i) => {
-    const tagText = r.type === 'Eksamen' ? 'EXAM' : r.type === 'Toets' ? 'TEST' : r.days <= 7 ? 'SOON' : '';
-    html += `<div class="study-rec-item">
+    const tagText = r.type === 'Eksamen' ? 'Eksamen' : r.type === 'Toets' ? 'Toets' : r.days <= 7 ? 'Binnekort' : '';
+    html += `<div class="study-rec-item" style="cursor:pointer" onclick="showStudyTodayItem('${r.id}')">
       <div class="study-rec-priority">${i + 1}</div>
       <div class="study-rec-info">
         <div class="study-rec-task">${SUBJ_NAMES[r.s]}: ${r.task}</div>
@@ -2226,7 +2237,7 @@ function renderHomework() {
   const hwDone = state.homework.filter(h => h.done);
 
   if (!hw.length && !hwDone.length) {
-    document.getElementById('homeworkList').innerHTML = '<div class="hw-empty">No homework yet. Tap + Add to get started.</div>';
+    document.getElementById('homeworkList').innerHTML = '<div class="hw-empty">No homework yet. Press + Add to get started.</div>';
     return;
   }
 
@@ -2560,7 +2571,7 @@ function showWeeklyReview() {
   }
 
   if (worstSubj && worstAvg < 60) {
-    html += `<div style="margin-top:14px;padding:10px;background:#fff3e0;border-radius:10px;font-size:0.82em">
+    html += `<div style="margin-top:14px;padding:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:10px;font-size:0.82em;color:var(--text)">
       <b style="color:var(--process)">Focus area:</b> ${SUBJ_FULL[worstSubj]} is at ${worstAvg}% average — consider extra study time this week.
     </div>`;
   }
